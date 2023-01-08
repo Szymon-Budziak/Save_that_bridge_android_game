@@ -1,8 +1,5 @@
 package unina.game.development.savethatbridge.physicsapp;
 
-/**
- * Created by mfaella on 05/03/16.
- */
 public class Box {
     public float xmin, ymin, xmax, ymax, width, height;
 

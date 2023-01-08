@@ -1,8 +1,5 @@
 package unina.game.development.savethatbridge.physicsapp;
 
-/**
- * An unordered pair of game objects.
- */
 public class Collision {
     GameObject a, b;
 
@@ -13,7 +10,7 @@ public class Collision {
 
     @Override
     public int hashCode() {
-        return a.hashCode() ^ b.hashCode();
+        return this.a.hashCode() ^ this.b.hashCode();
     }
 
     @Override

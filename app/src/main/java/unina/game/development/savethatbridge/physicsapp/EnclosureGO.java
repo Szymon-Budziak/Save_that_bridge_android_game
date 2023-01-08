@@ -1,19 +1,12 @@
 package unina.game.development.savethatbridge.physicsapp;
 
 import android.graphics.Bitmap;
-import android.graphics.Canvas;
 import android.graphics.Paint;
 
-import unina.game.development.savethatbridge.liquidfun.Body;
 import unina.game.development.savethatbridge.liquidfun.BodyDef;
-import unina.game.development.savethatbridge.liquidfun.BodyType;
 import unina.game.development.savethatbridge.liquidfun.PolygonShape;
 
-/**
- * A static box, usually encloses the whole world.
- * <p>
- * Created by mfaella on 27/02/16.
- */
+// A static box, usually encloses the whole world.
 public class EnclosureGO extends GameObject {
     private static final float THICKNESS = 0;
 
@@ -27,43 +20,38 @@ public class EnclosureGO extends GameObject {
         this.xmax = xmax;
         this.ymin = ymin;
         this.ymax = ymax;
-        this.screen_xmin = gw.worldToFrameBufferX(xmin + THICKNESS);
         this.screen_xmax = gw.worldToFrameBufferX(xmax - THICKNESS);
-        this.screen_ymin = gw.worldToFrameBufferY(ymin + THICKNESS);
+        this.screen_xmin = gw.worldToFrameBufferX(xmin + THICKNESS);
         this.screen_ymax = gw.worldToFrameBufferY(ymax - THICKNESS);
+        this.screen_ymin = gw.worldToFrameBufferY(ymin + THICKNESS);
 
         // a body definition: position and type
-        BodyDef bdef = new BodyDef();
+        BodyDef bodyDef = new BodyDef();
         // default position is (0,0) and default type is staticBody
-        this.body = gw.world.createBody(bdef);
+        this.body = gw.world.createBody(bodyDef);
         this.name = "Enclosure";
-        body.setUserData(this);
+        this.body.setUserData(this);
 
         PolygonShape box = new PolygonShape();
         // top
         box.setAsBox(xmax - xmin, THICKNESS, xmin + (xmax - xmin) / 2, ymin, 0); // last is rotation angle
-        body.createFixture(box, 0); // no density needed
+        this.body.createFixture(box, 0); // no density needed
         // bottom
         box.setAsBox(xmax - xmin, THICKNESS, xmin + (xmax - xmin) / 2, ymax, 0);
-        body.createFixture(box, 0);
+        this.body.createFixture(box, 0);
         // left
         box.setAsBox(THICKNESS, ymax - ymin, xmin, ymin + (ymax - ymin) / 2, 0);
-        body.createFixture(box, 0);
+        this.body.createFixture(box, 0);
         // right
         box.setAsBox(THICKNESS, ymax - ymin, xmax, ymin + (ymax - ymin) / 2, 0);
-        body.createFixture(box, 0);
+        this.body.createFixture(box, 0);
 
         // clean up native objects
-        bdef.delete();
+        bodyDef.delete();
         box.delete();
     }
 
     @Override
     public void draw(Bitmap buffer, float x, float y, float angle) {
-//        paint.setARGB(255, 0, 0, 255);
-//        paint.setStyle(Paint.Style.STROKE);
-//        paint.setStrokeWidth(2);
-//        Canvas canvas = new Canvas(buffer);
-//        canvas.drawRect(screen_xmin, screen_ymin, screen_xmax, screen_ymax, paint);
     }
 }

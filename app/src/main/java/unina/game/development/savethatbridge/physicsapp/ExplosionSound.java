@@ -7,6 +7,6 @@ public class ExplosionSound {
     static Music explosion;
 
     public static void init(Audio audio) {
-        explosion = audio.newMusic("explosion.mp3");
+        explosion = audio.newMusic("raw/explosion.waw");
     }
 }

@@ -5,10 +5,6 @@ import android.util.SparseArray;
 import unina.game.development.savethatbridge.logic.Audio;
 import unina.game.development.savethatbridge.logic.Sound;
 
-
-/**
- * Created by mfaella on 04/03/16.
- */
 public class CollisionSounds {
     private static Sound metallicSound;
     private static Sound dumbSound;
