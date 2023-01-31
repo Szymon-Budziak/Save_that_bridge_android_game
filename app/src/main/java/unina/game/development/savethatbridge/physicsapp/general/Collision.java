@@ -1,11 +1,21 @@
-package unina.game.development.savethatbridge.physicsapp;
+package unina.game.development.savethatbridge.physicsapp.general;
+
+import unina.game.development.savethatbridge.physicsapp.gameobjects.GameObject;
 
 public class Collision {
-    GameObject a, b;
+    private final GameObject a, b;
 
     public Collision(GameObject a, GameObject b) {
         this.a = a;
         this.b = b;
+    }
+
+    public GameObject getA() {
+        return this.a;
+    }
+
+    public GameObject getB() {
+        return this.b;
     }
 
     @Override
@@ -17,6 +27,6 @@ public class Collision {
     public boolean equals(Object other) {
         if (!(other instanceof Collision)) return false;
         Collision otherCollision = (Collision) other;
-        return (a.equals(otherCollision.a) && b.equals(otherCollision.b)) || (a.equals(otherCollision.b) && b.equals(otherCollision.a));
+        return (this.a.equals(otherCollision.a) && this.b.equals(otherCollision.b)) || (this.a.equals(otherCollision.b) && this.b.equals(otherCollision.a));
     }
 }

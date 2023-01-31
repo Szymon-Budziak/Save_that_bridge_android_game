@@ -1,11 +1,11 @@
-package unina.game.development.savethatbridge.physicsapp;
+package unina.game.development.savethatbridge.physicsapp.general;
 
 import com.google.fpl.liquidfun.Body;
 import com.google.fpl.liquidfun.Joint;
 import com.google.fpl.liquidfun.RevoluteJointDef;
 
 public class MyRevoluteJoint {
-    private Joint joint;
+    private final Joint joint;
 
     public MyRevoluteJoint(GameWorld gw, Body a, Body b, float xb, float yb, float xa, float ya) {
         RevoluteJointDef jointDef = new RevoluteJointDef();
@@ -20,6 +20,6 @@ public class MyRevoluteJoint {
     }
 
     public Joint getJoint() {
-        return joint;
+        return this.joint;
     }
 }

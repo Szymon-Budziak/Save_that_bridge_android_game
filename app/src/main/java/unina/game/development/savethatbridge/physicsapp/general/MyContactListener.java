@@ -1,4 +1,4 @@
-package unina.game.development.savethatbridge.physicsapp;
+package unina.game.development.savethatbridge.physicsapp.general;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -9,15 +9,13 @@ import com.google.fpl.liquidfun.ContactListener;
 import com.google.fpl.liquidfun.Fixture;
 
 import unina.game.development.savethatbridge.physicsapp.gameobjects.GameObject;
-import unina.game.development.savethatbridge.physicsapp.general.Collision;
 
 public class MyContactListener extends ContactListener {
-
-    private Collection<Collision> cache = new HashSet<>();
+    private final Collection<Collision> cache = new HashSet<>();
 
     public Collection<Collision> getCollisions() {
-        Collection<Collision> result = new HashSet<>(cache);
-        cache.clear();
+        Collection<Collision> result = new HashSet<>(this.cache);
+        this.cache.clear();
         return result;
     }
 
@@ -31,7 +29,6 @@ public class MyContactListener extends ContactListener {
         Body ba = fa.getBody(), bb = fb.getBody();
         Object userdataA = ba.getUserData(), userdataB = bb.getUserData();
         GameObject a = (GameObject) userdataA, b = (GameObject) userdataB;
-
-        cache.add(new Collision(a, b));
+        this.cache.add(new Collision(a, b));
     }
 }
