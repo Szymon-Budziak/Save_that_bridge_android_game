@@ -13,10 +13,9 @@ import com.google.fpl.liquidfun.BodyDef;
 import com.google.fpl.liquidfun.BodyType;
 
 import unina.game.development.savethatbridge.logic.Music;
-import unina.game.development.savethatbridge.physicsapp.ExplosionSound;
-import unina.game.development.savethatbridge.physicsapp.GameObject;
-import unina.game.development.savethatbridge.physicsapp.GameWorld;
-import unina.game.development.savethatbridge.physicsapp.MyRevoluteJoint;
+import unina.game.development.savethatbridge.physicsapp.sounds.ExplosionSound;
+import unina.game.development.savethatbridge.physicsapp.general.GameWorld;
+import unina.game.development.savethatbridge.physicsapp.general.MyRevoluteJoint;
 
 public class Bomb extends GameObject {
     private static float screenSemiWidth, screenSemiHeight;
@@ -93,13 +92,13 @@ public class Bomb extends GameObject {
 
         if (GameWorld.timer == 3) {
             this.paint.setARGB(255, 255, 255, 0);
-            this.canvas.drawText("3", this.gw.screenSize.xMax / 7, this.gw.screenSize.yMax / 4, this.paint);
+            this.canvas.drawText("3", this.gw.screenSize.getxMax() / 7, this.gw.screenSize.getyMax() / 4, this.paint);
         } else if (GameWorld.timer == 2) {
             this.paint.setARGB(255, 255, 150, 0);
-            this.canvas.drawText("2", this.gw.screenSize.xMax / 7, this.gw.screenSize.yMax / 4, this.paint);
+            this.canvas.drawText("2", this.gw.screenSize.getxMax() / 7, this.gw.screenSize.getyMax() / 4, this.paint);
         } else if (GameWorld.timer == 1) {
             this.paint.setARGB(255, 255, 0, 0);
-            this.canvas.drawText("1", this.gw.screenSize.xMax / 7, this.gw.screenSize.yMax / 4, this.paint);
+            this.canvas.drawText("1", this.gw.screenSize.getxMax() / 7, this.gw.screenSize.getyMax() / 4, this.paint);
         }
         this.canvas.restore();
     }
