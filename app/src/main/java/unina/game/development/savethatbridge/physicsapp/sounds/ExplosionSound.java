@@ -4,9 +4,13 @@ import unina.game.development.savethatbridge.logic.Audio;
 import unina.game.development.savethatbridge.logic.Music;
 
 public class ExplosionSound {
-    static Music explosion;
+    private static Music explosion;
 
     public static void init(Audio audio) {
-        explosion = audio.newMusic("raw/explosion.waw");
+        explosion = audio.newMusic("explosion.wav");
+    }
+
+    public static Music getExplosion() {
+        return explosion;
     }
 }

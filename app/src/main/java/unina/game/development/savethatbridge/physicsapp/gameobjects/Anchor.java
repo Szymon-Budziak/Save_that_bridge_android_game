@@ -10,8 +10,7 @@ import com.google.fpl.liquidfun.BodyType;
 import com.google.fpl.liquidfun.CircleShape;
 import com.google.fpl.liquidfun.FixtureDef;
 
-import unina.game.development.savethatbridge.physicsapp.GameObject;
-import unina.game.development.savethatbridge.physicsapp.GameWorld;
+import unina.game.development.savethatbridge.physicsapp.general.GameWorld;
 
 public class Anchor extends GameObject {
     private static final float friction = 0f;

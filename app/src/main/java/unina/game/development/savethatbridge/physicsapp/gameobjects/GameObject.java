@@ -2,11 +2,12 @@ package unina.game.development.savethatbridge.physicsapp;
 
 import android.graphics.Bitmap;
 
-import unina.game.development.savethatbridge.liquidfun.Body;
+import com.google.fpl.liquidfun.Body;
+import unina.game.development.savethatbridge.physicsapp.general.Box;
 
 public abstract class GameObject {
-    Body body;
-    protected String name;
+    public Body body;
+    public String name;
     protected GameWorld gw;
 
     public GameObject(GameWorld gw) {
@@ -19,7 +20,7 @@ public abstract class GameObject {
             float x = body.getPositionX(), y = body.getPositionY(), angle = body.getAngle();
             // Cropping
             Box view = gw.currentView;
-            if (x > view.xmin && x < view.xmax && y > view.ymin && y < view.ymax) {
+            if (x > view.xMin && x < view.xMax && y > view.yMin && y < view.yMax) {
                 // Screen position
                 float screen_x = gw.worldToFrameBufferX(x);
                 float screen_y = gw.worldToFrameBufferY(y);

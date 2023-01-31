@@ -1,12 +1,15 @@
 package unina.game.development.savethatbridge.physicsapp;
 
-import unina.game.development.savethatbridge.liquidfun.Body;
-import unina.game.development.savethatbridge.liquidfun.Contact;
-import unina.game.development.savethatbridge.liquidfun.ContactListener;
-import unina.game.development.savethatbridge.liquidfun.Fixture;
-
 import java.util.Collection;
 import java.util.HashSet;
+
+import com.google.fpl.liquidfun.Body;
+import com.google.fpl.liquidfun.Contact;
+import com.google.fpl.liquidfun.ContactListener;
+import com.google.fpl.liquidfun.Fixture;
+
+import unina.game.development.savethatbridge.physicsapp.gameobjects.GameObject;
+import unina.game.development.savethatbridge.physicsapp.general.Collision;
 
 public class MyContactListener extends ContactListener {
 

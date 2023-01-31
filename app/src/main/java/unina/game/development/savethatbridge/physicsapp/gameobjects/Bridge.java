@@ -14,8 +14,7 @@ import com.google.fpl.liquidfun.BodyType;
 import com.google.fpl.liquidfun.FixtureDef;
 import com.google.fpl.liquidfun.PolygonShape;
 
-import unina.game.development.savethatbridge.physicsapp.GameObject;
-import unina.game.development.savethatbridge.physicsapp.GameWorld;
+import unina.game.development.savethatbridge.physicsapp.general.GameWorld;
 
 public class Bridge extends GameObject {
     private static final float density = 3f;

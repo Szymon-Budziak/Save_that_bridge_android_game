@@ -12,9 +12,8 @@ import com.google.fpl.liquidfun.BodyDef;
 import com.google.fpl.liquidfun.BodyType;
 import com.google.fpl.liquidfun.Vec2;
 
-import unina.game.development.savethatbridge.physicsapp.AndroidFastRenderView;
-import unina.game.development.savethatbridge.physicsapp.GameObject;
-import unina.game.development.savethatbridge.physicsapp.GameWorld;
+import unina.game.development.savethatbridge.physicsapp.general.AndroidFastRenderView;
+import unina.game.development.savethatbridge.physicsapp.general.GameWorld;
 
 public class Terrorist extends GameObject {
     private static float screenSemiWidth, screenSemiHeight;
@@ -76,7 +75,7 @@ public class Terrorist extends GameObject {
             this.test_timer = 0;
         }
 
-        if (this.body.getPositionX() > this.gw.physicalSize.xMax - 1) {
+        if (this.body.getPositionX() > this.gw.physicalSize.getxMax() - 1) {
             AndroidFastRenderView.removeTerrorist = true;
         }
 
