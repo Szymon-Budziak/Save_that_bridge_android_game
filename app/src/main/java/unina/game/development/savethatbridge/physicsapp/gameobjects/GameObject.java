@@ -10,8 +10,8 @@ import unina.game.development.savethatbridge.physicsapp.general.GameWorld;
 import unina.game.development.savethatbridge.physicsapp.general.Box;
 
 public abstract class GameObject {
-    protected Body body;
-    protected String name;
+    public Body body;
+    public String name;
     protected GameWorld gw;
 
     public GameObject(GameWorld gw) {
