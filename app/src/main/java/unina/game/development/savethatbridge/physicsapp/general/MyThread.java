@@ -1,14 +1,16 @@
-package unina.game.development.savethatbridge.physicsapp;
+package unina.game.development.savethatbridge.physicsapp.general;
 
 import android.util.Log;
 
-import unina.game.development.savethatbridge.liquidfun.Fixture;
-import unina.game.development.savethatbridge.liquidfun.RayCastCallback;
-import unina.game.development.savethatbridge.liquidfun.Vec2;
+import com.google.fpl.liquidfun.Fixture;
+import com.google.fpl.liquidfun.RayCastCallback;
+import com.google.fpl.liquidfun.Vec2;
+
+import unina.game.development.savethatbridge.physicsapp.gameobjects.GameObject;
 
 public class MyThread extends Thread {
-    public volatile int counter;
-    private GameWorld gw;
+    private volatile int counter;
+    private final GameWorld gw;
 
     public MyThread(GameWorld gw) {
         this.gw = gw;
@@ -31,13 +33,21 @@ public class MyThread extends Thread {
         while (true) {
             try {
                 sleep(3000);
-                counter++;
-                Log.i("MyThread", "counter: " + counter);
+                this.counter++;
+                Log.i("MyThread", "counter: " + this.counter);
                 // inverts gravity
                 testRayCasting();
             } catch (InterruptedException e) {
                 return;
             }
         }
+    }
+
+    public int getCounter() {
+        return this.counter;
+    }
+
+    public void setCounter(int counter) {
+        this.counter = counter;
     }
 }
