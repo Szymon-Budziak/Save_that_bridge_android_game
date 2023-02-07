@@ -4,13 +4,13 @@ import unina.game.development.savethatbridge.logic.Audio;
 import unina.game.development.savethatbridge.logic.Music;
 
 public class BallSound {
-    private static Music ball;
+    private static Music ballSound;
 
     public static void init(Audio audio) {
-        ball = audio.newMusic("ball.wav");
+        ballSound = audio.newMusic("ball.wav");
     }
 
-    public static Music getBall() {
-        return ball;
+    public static Music getBallSound() {
+        return ballSound;
     }
 }

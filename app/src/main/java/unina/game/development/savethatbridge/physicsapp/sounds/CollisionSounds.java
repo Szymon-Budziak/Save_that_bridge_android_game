@@ -4,7 +4,7 @@ import android.util.SparseArray;
 
 import unina.game.development.savethatbridge.logic.Audio;
 import unina.game.development.savethatbridge.logic.Sound;
-import unina.game.development.savethatbridge.physicsapp.general.DynamicBoxGO;
+import unina.game.development.savethatbridge.physicsapp.gameobjects.DynamicBoxGO;
 import unina.game.development.savethatbridge.physicsapp.general.EnclosureGO;
 
 public class CollisionSounds {
