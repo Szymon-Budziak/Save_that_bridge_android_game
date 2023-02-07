@@ -9,6 +9,7 @@ import java.util.List;
 import android.graphics.Color;
 import android.util.Log;
 
+import unina.game.development.savethatbridge.R;
 import unina.game.development.savethatbridge.logic.Graphics.PixmapFormat;
 import unina.game.development.savethatbridge.logic.Input.KeyEvent;
 import unina.game.development.savethatbridge.logic.Input.TouchEvent;
@@ -25,11 +26,11 @@ class TestScreen extends Screen {
         super(game);
         bob = game.getGraphics().newPixmap("bobrgb888.png", PixmapFormat.RGB565);
         bobAlpha = game.getGraphics().newPixmap("bobargb8888.png", PixmapFormat.ARGB4444);
-        music = game.getAudio().newMusic("music.ogg");
+        music = game.getAudio().newMusic("soundtrack.mp3");
         music.setLooping(true);
         music.setVolume(0.5f);
         music.play();
-        sound = game.getAudio().newSound("music.ogg");
+        sound = game.getAudio().newSound("soundtrack.mp3");
 
         try {
             BufferedReader in = new BufferedReader(new InputStreamReader(game.getFileIO().readAsset("test.txt")));
