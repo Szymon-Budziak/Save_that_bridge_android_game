@@ -12,29 +12,41 @@ import com.google.fpl.liquidfun.BodyDef;
 import com.google.fpl.liquidfun.BodyType;
 import com.google.fpl.liquidfun.Vec2;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
 import unina.game.development.savethatbridge.physicsapp.general.AndroidFastRenderView;
 import unina.game.development.savethatbridge.physicsapp.general.GameWorld;
+import unina.game.development.savethatbridge.physicsapp.general.Level;
 
 public class Terrorist extends GameObject {
     private static float screenSemiWidth, screenSemiHeight;
     private final Canvas canvas;
 
-    private Rect src;
+    private final Rect src;
     private final RectF dest = new RectF();
     private final Bitmap bitmap;
-    private int sprite = 1;
+    private int sprite = 0;
 
-    private int test_timer = 0;
-    private boolean bombPlanted = false;
+    private long updateTime = 0;
+    private boolean allBombsPlanted = false;
+    private int numberOfBombs = 2;
+    private static final List<Integer> timeToPlantBombs = new ArrayList<>();
+    private final long now;
+
+    private static final int FRAME_WIDTH = 46;
 
     public Terrorist(GameWorld gw, float x, float y) {
         super(gw);
         int width = 2;
         int height = 2;
 
-        this.canvas = new Canvas(gw.buffer);
+        this.canvas = new Canvas(gw.getBuffer());
         screenSemiHeight = gw.toPixelsYLength(height) / 2;
         screenSemiWidth = gw.toPixelsXLength(width) / 2;
+        this.src = new Rect(0, 150, FRAME_WIDTH, 200);
+        this.now = System.currentTimeMillis() / 1000;
 
         // a body definition: position and type
         BodyDef bodyDef = new BodyDef();
@@ -43,10 +55,12 @@ public class Terrorist extends GameObject {
         bodyDef.setLinearVelocity(new Vec2((float) 3, 0));
 
         // a body
-        this.body = gw.world.createBody(bodyDef);
+        this.body = gw.getWorld().createBody(bodyDef);
         this.body.setSleepingAllowed(true);
         this.name = "Terrorist";
         this.body.setUserData(this);
+
+        generateRandomTimeBombPlants();
 
         // Prevents scaling
         BitmapFactory.Options o = new BitmapFactory.Options();
@@ -58,30 +72,51 @@ public class Terrorist extends GameObject {
     }
 
     private void updateAnimation() {
-        if (this.sprite == 5)
-            this.sprite = 0;
-        else
-            this.sprite++;
-        this.src.top = this.sprite * 15;
-        this.src.bottom = this.sprite * 15 + 15;
+        this.src.left = this.sprite * FRAME_WIDTH;
+        this.src.right = this.sprite * FRAME_WIDTH + FRAME_WIDTH;
+        if (this.sprite == 7) this.sprite = 0;
+        else this.sprite++;
+    }
+
+    public void setNumberOfBombs(int numberOfBombs) {
+        this.numberOfBombs = numberOfBombs;
+    }
+
+    private void generateRandomTimeBombPlants() {
+        for (int i = 0; i < numberOfBombs; i++) {
+            Random random = new Random();
+            timeToPlantBombs.add(random.nextInt(8));
+        }
+    }
+
+    private void checkToSpawnTheBomb() {
+        long currentTime = System.currentTimeMillis() / 1000;
+        long timePassed = this.now - currentTime;
+        for (int i = 0; i < timeToPlantBombs.size(); i++) {
+            int time = timeToPlantBombs.get(i);
+            if (time > timePassed && this.body.getPositionX() > (Level.getBomb() != null ? Level.getBomb().body.getPositionX() : 0)) {
+                AndroidFastRenderView.setSpawnBomb(true);
+                timeToPlantBombs.remove(i);
+                i--;
+            }
+        }
+        if (timeToPlantBombs.isEmpty()) this.allBombsPlanted = true;
     }
 
     @Override
     public void draw(Bitmap buf, float x, float y, float angle) {
-        this.src = new Rect(0, 0, 21, 15);
-        this.test_timer++;
-        if (this.test_timer == 8) {
+        if (this.updateTime == 6) {
             updateAnimation();
-            this.test_timer = 0;
+            this.updateTime = 0;
+        }
+        this.updateTime++;
+
+        if (this.body.getPositionX() > this.gw.getPhysicalSize().getxMax() - 1) {
+            AndroidFastRenderView.setRemoveTerrorist(true);
         }
 
-        if (this.body.getPositionX() > this.gw.physicalSize.getxMax() - 1) {
-            AndroidFastRenderView.removeTerrorist = true;
-        }
-
-        if (!this.bombPlanted && this.body.getPositionX() > GameWorld.bomb.body.getPositionX()) {
-            AndroidFastRenderView.spawnBomb = true;
-            this.bombPlanted = true;
+        if (!this.allBombsPlanted) {
+            checkToSpawnTheBomb();
         }
 
         this.canvas.save();

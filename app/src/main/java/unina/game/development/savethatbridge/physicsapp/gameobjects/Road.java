@@ -24,7 +24,7 @@ public class Road extends GameObject {
         super(gw);
 
         instances++;
-        this.canvas = new Canvas(gw.buffer);
+        this.canvas = new Canvas(gw.getBuffer());
 
         this.width = Math.abs(xMax - xMin);
         this.height = Math.abs(yMax - yMin);
@@ -34,7 +34,7 @@ public class Road extends GameObject {
         bodyDef.setPosition(xMin + this.width / 2, yMin + this.height / 2);
 
         // a body
-        this.body = gw.world.createBody(bodyDef);
+        this.body = gw.getWorld().createBody(bodyDef);
         this.name = "Road" + instances;
         this.body.setUserData(this);
 

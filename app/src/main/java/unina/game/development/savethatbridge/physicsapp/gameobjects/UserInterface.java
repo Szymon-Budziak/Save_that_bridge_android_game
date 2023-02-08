@@ -22,7 +22,7 @@ public class UserInterface extends GameObject {
 
         instances++;
 
-        this.canvas = new Canvas(gw.buffer);
+        this.canvas = new Canvas(gw.getBuffer());
         this.paint = new Paint();
 
         // a body definition: position and type
@@ -30,7 +30,7 @@ public class UserInterface extends GameObject {
         bodyDef.setType(BodyType.staticBody);
 
         // a body
-        this.body = gw.world.createBody(bodyDef);
+        this.body = gw.getWorld().createBody(bodyDef);
         this.body.setSleepingAllowed(false);
         this.name = "UI" + instances;
         this.body.setUserData(this);
@@ -38,7 +38,7 @@ public class UserInterface extends GameObject {
         int color = Color.argb(255, 0, 0, 0);
         this.paint.setColor(color);
         this.paint.setStyle(Paint.Style.FILL_AND_STROKE);
-        this.paint.setTextSize(Math.abs(this.gw.screenSize.getyMax() / 30 - this.gw.screenSize.getyMax() / 20));
+        this.paint.setTextSize(Math.abs(this.gw.getScreenSize().getyMax() / 30 - this.gw.getScreenSize().getyMax() / 20));
         this.paint.setTextAlign(Paint.Align.CENTER);
 
         // clean up native objects
@@ -53,7 +53,7 @@ public class UserInterface extends GameObject {
     public void draw(Bitmap buf, float x, float y, float angle) {
         this.canvas.save();
         this.canvas.rotate((float) Math.toDegrees(angle), x, y);
-        this.canvas.drawText("Level : " + level, this.gw.screenSize.getxMax() / 8, this.gw.screenSize.getyMax() / 30, this.paint);
+        this.canvas.drawText("Level : " + level, this.gw.getScreenSize().getxMax() / 8, this.gw.getScreenSize().getyMax() / 30, this.paint);
         this.canvas.restore();
     }
 }

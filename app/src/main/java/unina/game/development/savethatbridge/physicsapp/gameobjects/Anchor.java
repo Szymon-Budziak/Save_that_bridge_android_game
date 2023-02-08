@@ -25,7 +25,7 @@ public class Anchor extends GameObject {
         super(gw);
         instances++;
 
-        this.canvas = new Canvas(gw.buffer);
+        this.canvas = new Canvas(gw.getBuffer());
         this.paint = new Paint();
         this.screenSemiWidth = gw.toPixelsXLength(width) / 2;
 
@@ -35,7 +35,7 @@ public class Anchor extends GameObject {
         bodyDef.setType(BodyType.staticBody);
 
         // a body
-        this.body = gw.world.createBody(bodyDef);
+        this.body = gw.getWorld().createBody(bodyDef);
         this.body.setSleepingAllowed(false);
         this.name = "Anchor" + instances;
         this.body.setUserData(this);

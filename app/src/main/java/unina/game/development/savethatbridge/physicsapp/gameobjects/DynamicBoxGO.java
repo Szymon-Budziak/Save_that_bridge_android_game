@@ -33,7 +33,7 @@ public class DynamicBoxGO extends GameObject {
 
         instances++;
 
-        this.canvas = new Canvas(gw.buffer);
+        this.canvas = new Canvas(gw.getBuffer());
         this.paint = new Paint();
         screenSemiWidth = gw.toPixelsXLength(width) / 2;
         screenSemiHeight = gw.toPixelsYLength(height) / 2;
@@ -44,7 +44,7 @@ public class DynamicBoxGO extends GameObject {
         bodyDef.setType(BodyType.dynamicBody);
 
         // a body
-        this.body = gw.world.createBody(bodyDef);
+        this.body = gw.getWorld().createBody(bodyDef);
         this.body.setSleepingAllowed(false);
         this.name = "Box" + instances;
         this.body.setUserData(this);

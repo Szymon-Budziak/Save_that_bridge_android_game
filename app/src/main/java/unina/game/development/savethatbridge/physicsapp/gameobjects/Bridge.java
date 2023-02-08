@@ -34,7 +34,7 @@ public class Bridge extends GameObject {
         super(gw);
         instances++;
 
-        this.canvas = new Canvas(gw.buffer);
+        this.canvas = new Canvas(gw.getBuffer());
         this.paint = new Paint();
         this.screenSemiHeight = gw.toPixelsYLength(height) / 2;
         this.screenSemiWidth = gw.toPixelsXLength(width) / 2;
@@ -45,7 +45,7 @@ public class Bridge extends GameObject {
         bodyDef.setType(BodyType.dynamicBody);
 
         // a body
-        this.body = gw.world.createBody(bodyDef);
+        this.body = gw.getWorld().createBody(bodyDef);
         this.body.setSleepingAllowed(false);
         this.name = "Bridge" + instances;
         this.body.setUserData(this);

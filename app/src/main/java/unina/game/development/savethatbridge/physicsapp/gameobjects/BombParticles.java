@@ -40,7 +40,7 @@ public class BombParticles extends GameObject {
     public BombParticles(GameWorld gw, float x, float y) {
         super(gw);
 
-        this.canvas = new Canvas(gw.buffer);
+        this.canvas = new Canvas(gw.getBuffer());
         this.particleSystem = gw.getParticleSystem();
         this.paint = new Paint();
         this.paint.setStyle(Paint.Style.FILL_AND_STROKE);

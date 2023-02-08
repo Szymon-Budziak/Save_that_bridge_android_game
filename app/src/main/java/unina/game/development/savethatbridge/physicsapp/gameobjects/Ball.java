@@ -30,7 +30,7 @@ public class Ball extends GameObject {
         super(gw);
         instances++;
 
-        this.canvas = new Canvas(gw.buffer);
+        this.canvas = new Canvas(gw.getBuffer());
         this.paint = new Paint();
         screen_semi_height = gw.toPixelsYLength(height) / 2;
         screen_semi_width = gw.toPixelsXLength(width) / 2;
@@ -42,7 +42,7 @@ public class Ball extends GameObject {
         bodyDef.setLinearVelocity(new Vec2((float) 9, 0));
 
         // a body
-        this.body = gw.world.createBody(bodyDef);
+        this.body = gw.getWorld().createBody(bodyDef);
         this.body.setSleepingAllowed(false);
         this.name = "Ball" + instances;
         this.body.setUserData(this);
