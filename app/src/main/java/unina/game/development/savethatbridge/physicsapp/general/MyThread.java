@@ -25,7 +25,7 @@ public class MyThread extends Thread {
                 return 1;
             }
         };
-        this.gw.world.rayCast(listener, -10, 0, 10, 0);
+        this.gw.getWorld().rayCast(listener, -10, 0, 10, 0);
     }
 
     @Override

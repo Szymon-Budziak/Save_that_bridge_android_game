@@ -67,7 +67,7 @@ public class TouchConsumer {
         Log.d("MultiTouchHandler", "touch down at " + x + ", " + y);
 
         this.touchedFixture = null;
-        this.gw.world.queryAABB(this.touchQueryCallback, x - POINTER_SIZE, y - POINTER_SIZE, x + POINTER_SIZE, y + POINTER_SIZE);
+        this.gw.getWorld().queryAABB(this.touchQueryCallback, x - POINTER_SIZE, y - POINTER_SIZE, x + POINTER_SIZE, y + POINTER_SIZE);
         if (this.touchedFixture != null) {
             // From fixture to GO
             Body touchedBody = this.touchedFixture.getBody();
@@ -131,13 +131,13 @@ public class TouchConsumer {
         mouseJointDef.setBodyB(touchedBody);
         mouseJointDef.setMaxForce(500 * touchedBody.getMass());
         mouseJointDef.setTarget(x, y);
-        this.mouseJoint = this.gw.world.createMouseJoint(mouseJointDef);
+        this.mouseJoint = this.gw.getWorld().createMouseJoint(mouseJointDef);
     }
 
     private void consumeTouchUp(Input.TouchEvent event) {
         if (this.mouseJoint != null && event.pointer == this.activePointerID) {
             Log.d("MultiTouchHandler", "Releasing joint");
-            this.gw.world.destroyJoint(this.mouseJoint);
+            this.gw.getWorld().destroyJoint(this.mouseJoint);
             this.mouseJoint = null;
             this.activePointerID = 0;
         }

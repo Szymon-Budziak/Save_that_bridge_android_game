@@ -17,7 +17,7 @@ public class EnclosureGO extends GameObject {
         BodyDef bodyDef = new BodyDef();
 
         // default position is (0,0) and default type is staticBody
-        this.body = gw.world.createBody(bodyDef);
+        this.body = gw.getWorld().createBody(bodyDef);
         this.name = "Enclosure";
         this.body.setUserData(this);
 
