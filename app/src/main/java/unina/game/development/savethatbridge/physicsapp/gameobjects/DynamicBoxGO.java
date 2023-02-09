@@ -34,7 +34,7 @@ public class DynamicBoxGO extends GameObject {
         super(gw);
         instances++;
 
-        this.canvas = new Canvas(gw.getBuffer());
+        this.canvas = new Canvas(gw.getBitmapBuffer());
         this.paint = new Paint();
         this.screenSemiWidth = gw.toPixelsXLength(width) / 2;
         this.screenSemiHeight = gw.toPixelsYLength(height) / 2;

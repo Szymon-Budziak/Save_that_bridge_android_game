@@ -26,7 +26,7 @@ public class Road extends GameObject {
         super(gw);
 
         instances++;
-        this.canvas = new Canvas(gw.getBuffer());
+        this.canvas = new Canvas(gw.getBitmapBuffer());
         this.width = Math.abs(xMax - xMin);
         this.height = Math.abs(yMax - yMin);
         this.xMinRoad = xMin;

@@ -34,7 +34,7 @@ public class BridgeReinforcement extends GameObject {
         super(gw);
         instances++;
 
-        this.canvas = new Canvas(gw.getBuffer());
+        this.canvas = new Canvas(gw.getBitmapBuffer());
         this.paint = new Paint();
         this.screenSemiHeight = gw.toPixelsYLength(height) / 2;
         this.screenSemiWidth = gw.toPixelsXLength(width) / 2;

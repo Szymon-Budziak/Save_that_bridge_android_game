@@ -31,7 +31,7 @@ public class Ball extends GameObject {
         super(gw);
         instances++;
 
-        this.canvas = new Canvas(gw.getBuffer());
+        this.canvas = new Canvas(gw.getBitmapBuffer());
         this.paint = new Paint();
         this.screenSemiWidth = gw.toPixelsXLength(width) / 2;
         this.screenSemiHeight = gw.toPixelsYLength(height) / 2;
@@ -40,7 +40,7 @@ public class Ball extends GameObject {
         BodyDef bodyDef = new BodyDef();
         bodyDef.setPosition(x, y);
         bodyDef.setType(BodyType.dynamicBody);
-        bodyDef.setLinearVelocity(new Vec2((float) 9, 0));
+        bodyDef.setAngularVelocity(10000.0F);
 
         // a body
         this.body = gw.getWorld().createBody(bodyDef);

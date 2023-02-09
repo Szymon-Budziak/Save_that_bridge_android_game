@@ -28,8 +28,8 @@ public abstract class GameObject {
             Box view = this.gw.getCurrentView();
             if (x > view.getxMin() && x < view.getxMax() && y > view.getyMin() && y < view.getyMax()) {
                 // Screen position
-                float screen_x = this.gw.worldToFrameBufferX(x);
-                float screen_y = this.gw.worldToFrameBufferY(y);
+                float screen_x = this.gw.setWorldToFrameX(x);
+                float screen_y = this.gw.setWorldToFrameY(y);
                 this.draw(buffer, screen_x, screen_y, angle);
                 return true;
             } else return false;

@@ -39,7 +39,7 @@ public class Bomb extends GameObject {
         this.joint = joint;
         this.gameWorld = gw;
 
-        this.canvas = new Canvas(gw.getBuffer());
+        this.canvas = new Canvas(gw.getBitmapBuffer());
         this.paint = new Paint();
 
         float size = (resources.getInteger(R.integer.worldXMax) - resources.getInteger(R.integer.worldXMin)) / 20;
@@ -76,7 +76,7 @@ public class Bomb extends GameObject {
         GameWorld.getJointsToDestroy().add(this.joint.getJoint());
         GameWorld.getGameJoints().remove(this.joint);
         GameWorld.setOldObjectsRemoved(false);
-        this.gameWorld.summonParticles(this.x, this.y);
+        this.gameWorld.summonBombParticles(this.x, this.y);
         this.joint = null;
     }
 

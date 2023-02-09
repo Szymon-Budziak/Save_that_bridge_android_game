@@ -33,7 +33,7 @@ public class BombParticles extends GameObject {
     public BombParticles(GameWorld gw, float x, float y) {
         super(gw);
 
-        this.canvas = new Canvas(gw.getBuffer());
+        this.canvas = new Canvas(gw.getBitmapBuffer());
         this.paint = new Paint();
         this.paint.setStyle(Paint.Style.FILL_AND_STROKE);
         this.particleSystem = gw.getParticleSystem();
@@ -84,7 +84,7 @@ public class BombParticles extends GameObject {
                 x = Float.intBitsToFloat(calculateXBigEndian(i));
                 y = Float.intBitsToFloat(calculateYBigEndian(i));
             }
-            this.canvas.drawCircle(this.gw.worldToFrameBufferX(x), this.gw.worldToFrameBufferY(y), 4, this.paint);
+            this.canvas.drawCircle(this.gw.setWorldToFrameX(x), this.gw.setWorldToFrameY(y), 4, this.paint);
         }
     }
 

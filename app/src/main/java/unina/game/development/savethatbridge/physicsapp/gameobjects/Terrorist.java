@@ -12,28 +12,19 @@ import com.google.fpl.liquidfun.BodyDef;
 import com.google.fpl.liquidfun.BodyType;
 import com.google.fpl.liquidfun.Vec2;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-
 import unina.game.development.savethatbridge.physicsapp.general.AndroidFastRenderView;
 import unina.game.development.savethatbridge.physicsapp.general.GameWorld;
 
 public class Terrorist extends GameObject {
-    private static float screenSemiWidth, screenSemiHeight;
     private final Canvas canvas;
-
-    private final Rect src;
     private final RectF dest = new RectF();
     private final Bitmap bitmap;
-    private int sprite = 0;
+    private final Rect src;
 
+    private int sprite = 0;
     private long updateTime = 0;
     private boolean allBombsPlanted = false;
-    private int numberOfBombs = 2;
-    private static final List<Integer> timeToPlantBombs = new ArrayList<>();
-    private final long now;
-
+    private final float screenSemiWidth, screenSemiHeight;
     private static final int FRAME_WIDTH = 46;
 
     public Terrorist(GameWorld gw, float x, float y) {
@@ -41,11 +32,10 @@ public class Terrorist extends GameObject {
         int width = 2;
         int height = 2;
 
-        this.canvas = new Canvas(gw.getBuffer());
-        screenSemiHeight = gw.toPixelsYLength(height) / 2;
-        screenSemiWidth = gw.toPixelsXLength(width) / 2;
+        this.canvas = new Canvas(gw.getBitmapBuffer());
         this.src = new Rect(0, 150, FRAME_WIDTH, 200);
-        this.now = System.currentTimeMillis() / 1000;
+        this.screenSemiHeight = gw.toPixelsYLength(height) / 2;
+        this.screenSemiWidth = gw.toPixelsXLength(width) / 2;
 
         // a body definition: position and type
         BodyDef bodyDef = new BodyDef();
@@ -59,9 +49,7 @@ public class Terrorist extends GameObject {
         this.name = "Terrorist";
         this.body.setUserData(this);
 
-        generateRandomTimeBombPlants();
-
-        // Prevents scaling
+        // prevents scaling and sets terrorist to a picture
         BitmapFactory.Options o = new BitmapFactory.Options();
         o.inScaled = false;
         this.bitmap = BitmapFactory.decodeResource(gw.getActivity().getResources(), R.drawable.terrorist, o);
@@ -77,31 +65,7 @@ public class Terrorist extends GameObject {
         else this.sprite++;
     }
 
-    public void setNumberOfBombs(int numberOfBombs) {
-        this.numberOfBombs = numberOfBombs;
-    }
-
-    private void generateRandomTimeBombPlants() {
-        for (int i = 0; i < numberOfBombs; i++) {
-            Random random = new Random();
-            timeToPlantBombs.add(random.nextInt(8));
-        }
-    }
-
-    private void checkToSpawnTheBomb() {
-        long currentTime = System.currentTimeMillis() / 1000;
-        long timePassed = this.now - currentTime;
-        for (int i = 0; i < timeToPlantBombs.size(); i++) {
-            int time = timeToPlantBombs.get(i);
-            if (time > timePassed && this.body.getPositionX() > GameWorld.getBomb().body.getPositionX()) {
-                AndroidFastRenderView.setSpawnBomb(true);
-                timeToPlantBombs.remove(i);
-                i--;
-            }
-        }
-        if (timeToPlantBombs.isEmpty()) this.allBombsPlanted = true;
-    }
-
+    // draw terrorist
     @Override
     public void draw(Bitmap buf, float x, float y, float angle) {
         if (this.updateTime == 6) {
@@ -110,20 +74,20 @@ public class Terrorist extends GameObject {
         }
         this.updateTime++;
 
+        if (!this.allBombsPlanted && this.body.getPositionX() > GameWorld.getBomb().body.getPositionX()) {
+            AndroidFastRenderView.setSpawnBomb(true);
+            this.allBombsPlanted = true;
+        }
+
         if (this.body.getPositionX() > this.gw.getPhysicalSize().getxMax() - 1) {
             AndroidFastRenderView.setRemoveTerrorist(true);
         }
-
-        if (!this.allBombsPlanted) {
-            checkToSpawnTheBomb();
-        }
-
         this.canvas.save();
         this.canvas.rotate((float) Math.toDegrees(angle), x, y);
-        this.dest.left = x - screenSemiWidth;
-        this.dest.bottom = y + screenSemiHeight;
-        this.dest.right = x + screenSemiWidth;
-        this.dest.top = y - screenSemiHeight;
+        this.dest.top = y - this.screenSemiHeight;
+        this.dest.bottom = y + this.screenSemiHeight;
+        this.dest.right = x + this.screenSemiWidth;
+        this.dest.left = x - this.screenSemiWidth;
         this.canvas.drawBitmap(this.bitmap, this.src, this.dest, null);
         this.canvas.restore();
     }
