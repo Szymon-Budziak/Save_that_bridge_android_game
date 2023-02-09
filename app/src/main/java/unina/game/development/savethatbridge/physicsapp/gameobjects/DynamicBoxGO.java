@@ -24,7 +24,6 @@ public class DynamicBoxGO extends GameObject {
     private static int instances = 0;
 
     private final Canvas canvas;
-    private final Paint paint;
     private final Bitmap bitmap;
     private final RectF dest = new RectF();
 
@@ -34,7 +33,7 @@ public class DynamicBoxGO extends GameObject {
         instances++;
 
         this.canvas = new Canvas(gw.getBuffer());
-        this.paint = new Paint();
+        Paint paint = new Paint();
         screenSemiWidth = gw.toPixelsXLength(width) / 2;
         screenSemiHeight = gw.toPixelsYLength(height) / 2;
 
@@ -61,13 +60,13 @@ public class DynamicBoxGO extends GameObject {
 
         int green = (int) (255 * Math.random());
         int color = Color.argb(200, 255, green, 0);
-        this.paint.setColor(color);
-        this.paint.setStyle(Paint.Style.FILL_AND_STROKE);
+        paint.setColor(color);
+        paint.setStyle(Paint.Style.FILL_AND_STROKE);
 
         // Prevents scaling
         BitmapFactory.Options o = new BitmapFactory.Options();
         o.inScaled = false;
-        this.bitmap = BitmapFactory.decodeResource(gw.activity.getResources(), R.drawable.icona, o);
+        this.bitmap = BitmapFactory.decodeResource(gw.getActivity().getResources(), R.drawable.icona, o);
 
         // clean up native objects
         bodyDef.delete();

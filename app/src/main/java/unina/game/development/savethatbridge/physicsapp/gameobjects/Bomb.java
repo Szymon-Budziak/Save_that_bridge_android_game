@@ -39,7 +39,7 @@ public class Bomb extends GameObject {
         this.joint = joint;
         this.gw = gw;
 
-        this.canvas = new Canvas(gw.buffer);
+        this.canvas = new Canvas(gw.getBuffer());
         this.paint = new Paint();
 
         float size = (resources.getInteger(R.integer.worldXMax) - resources.getInteger(R.integer.worldXMin)) / 20;
@@ -52,7 +52,7 @@ public class Bomb extends GameObject {
         bodyDef.setType(BodyType.kinematicBody);
 
         // a body
-        this.body = gw.world.createBody(bodyDef);
+        this.body = gw.getWorld().createBody(bodyDef);
         this.body.setSleepingAllowed(true);
         this.name = "Bomb" + instances;
         this.body.setUserData(this);
@@ -63,7 +63,7 @@ public class Bomb extends GameObject {
         // Prevents scaling
         BitmapFactory.Options o = new BitmapFactory.Options();
         o.inScaled = false;
-        this.bitmap = BitmapFactory.decodeResource(gw.activity.getResources(), R.drawable.bomb, o);
+        this.bitmap = BitmapFactory.decodeResource(gw.getActivity().getResources(), R.drawable.bomb, o);
 
         // clean up native objects
         bodyDef.delete();
@@ -73,8 +73,8 @@ public class Bomb extends GameObject {
         Music explosion = ExplosionSound.getExplosion();
         explosion.stop();
         explosion.play();
-        GameWorld.jointsToDestroy.add(this.joint.getJoint());
-        GameWorld.myJoints.remove(this.joint);
+        GameWorld.getJointsToDestroy().add(this.joint.getJoint());
+        GameWorld.getGameJoints().remove(this.joint);
         GameWorld.setOldObjectsRemoved(false);
         this.gw.summonParticles(this.x, this.y);
         this.joint = null;
@@ -92,13 +92,13 @@ public class Bomb extends GameObject {
 
         if (GameWorld.timer == 3) {
             this.paint.setARGB(255, 255, 255, 0);
-            this.canvas.drawText("3", this.gw.screenSize.getxMax() / 7, this.gw.screenSize.getyMax() / 4, this.paint);
+            this.canvas.drawText("3", this.gw.getScreenSize().getxMax() / 7, this.gw.getScreenSize().getyMax() / 4, this.paint);
         } else if (GameWorld.timer == 2) {
             this.paint.setARGB(255, 255, 150, 0);
-            this.canvas.drawText("2", this.gw.screenSize.getxMax() / 7, this.gw.screenSize.getyMax() / 4, this.paint);
+            this.canvas.drawText("2", this.gw.getScreenSize().getxMax() / 7, this.gw.getScreenSize().getyMax() / 4, this.paint);
         } else if (GameWorld.timer == 1) {
             this.paint.setARGB(255, 255, 0, 0);
-            this.canvas.drawText("1", this.gw.screenSize.getxMax() / 7, this.gw.screenSize.getyMax() / 4, this.paint);
+            this.canvas.drawText("1", this.gw.getScreenSize().getxMax() / 7, this.gw.getScreenSize().getyMax() / 4, this.paint);
         }
         this.canvas.restore();
     }

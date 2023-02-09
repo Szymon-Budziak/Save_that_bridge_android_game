@@ -45,7 +45,7 @@ public class Road extends GameObject {
         // Prevents scaling
         BitmapFactory.Options o = new BitmapFactory.Options();
         o.inScaled = false;
-        this.bitmap = BitmapFactory.decodeResource(gw.activity.getResources(), R.drawable.road, o);
+        this.bitmap = BitmapFactory.decodeResource(gw.getActivity().getResources(), R.drawable.road, o);
 
         this.dest.top = 200;
         this.dest.bottom = 400;

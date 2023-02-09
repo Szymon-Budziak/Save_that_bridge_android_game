@@ -67,7 +67,7 @@ public class Bridge extends GameObject {
         // prevents scaling
         BitmapFactory.Options o = new BitmapFactory.Options();
         o.inScaled = false;
-        this.bitmap = BitmapFactory.decodeResource(gw.activity.getResources(), R.drawable.box, o);
+        this.bitmap = BitmapFactory.decodeResource(gw.getActivity().getResources(), R.drawable.box, o);
 
         // clean up native objects
         bodyDef.delete();

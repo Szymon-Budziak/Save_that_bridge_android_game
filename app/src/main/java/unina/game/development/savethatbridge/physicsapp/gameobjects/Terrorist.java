@@ -18,7 +18,6 @@ import java.util.Random;
 
 import unina.game.development.savethatbridge.physicsapp.general.AndroidFastRenderView;
 import unina.game.development.savethatbridge.physicsapp.general.GameWorld;
-import unina.game.development.savethatbridge.physicsapp.general.Level;
 
 public class Terrorist extends GameObject {
     private static float screenSemiWidth, screenSemiHeight;
@@ -65,7 +64,7 @@ public class Terrorist extends GameObject {
         // Prevents scaling
         BitmapFactory.Options o = new BitmapFactory.Options();
         o.inScaled = false;
-        this.bitmap = BitmapFactory.decodeResource(gw.activity.getResources(), R.drawable.terrorist, o);
+        this.bitmap = BitmapFactory.decodeResource(gw.getActivity().getResources(), R.drawable.terrorist, o);
 
         // clean up native objects
         bodyDef.delete();
@@ -94,7 +93,7 @@ public class Terrorist extends GameObject {
         long timePassed = this.now - currentTime;
         for (int i = 0; i < timeToPlantBombs.size(); i++) {
             int time = timeToPlantBombs.get(i);
-            if (time > timePassed && this.body.getPositionX() > (Level.getBomb() != null ? Level.getBomb().body.getPositionX() : 0)) {
+            if (time > timePassed && this.body.getPositionX() > GameWorld.getBomb().body.getPositionX()) {
                 AndroidFastRenderView.setSpawnBomb(true);
                 timeToPlantBombs.remove(i);
                 i--;
