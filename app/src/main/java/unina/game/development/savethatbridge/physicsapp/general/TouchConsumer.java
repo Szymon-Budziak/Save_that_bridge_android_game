@@ -58,8 +58,8 @@ public class TouchConsumer {
 
         if (this.mouseJoint != null) return;
 
-        float x = this.gw.screenToWorldX(event.x);
-        float y = this.gw.screenToWorldY(event.y);
+        float x = this.gw.setScreenToWorldX(event.x);
+        float y = this.gw.setScreenToWorldY(event.y);
 
         Log.d("MultiTouchHandler", "touch down at " + x + ", " + y);
 
@@ -141,8 +141,8 @@ public class TouchConsumer {
     }
 
     private void consumeTouchMove(Input.TouchEvent event) {
-        float x = this.gw.screenToWorldX(event.x);
-        float y = this.gw.screenToWorldY(event.y);
+        float x = this.gw.setScreenToWorldX(event.x);
+        float y = this.gw.setScreenToWorldY(event.y);
         if (this.mouseJoint != null && event.pointer == this.activePointerID) {
             Log.d("MultiTouchHandler", "active pointer moved to " + x + ", " + y);
             this.mouseJoint.setTarget(x, y);
