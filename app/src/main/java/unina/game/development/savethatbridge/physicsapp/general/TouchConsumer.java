@@ -8,7 +8,6 @@ import com.google.fpl.liquidfun.MouseJoint;
 import com.google.fpl.liquidfun.MouseJointDef;
 import com.google.fpl.liquidfun.QueryCallback;
 
-import unina.game.development.savethatbridge.logic.Game;
 import unina.game.development.savethatbridge.logic.Input;
 import unina.game.development.savethatbridge.physicsapp.gameobjects.DynamicBoxGO;
 import unina.game.development.savethatbridge.physicsapp.gameobjects.GameObject;
@@ -22,10 +21,8 @@ public class TouchConsumer {
     private int activePointerID;
     private Fixture touchedFixture;
     private GameObject oldObject;
-
     private final GameWorld gw;
     private final QueryCallback touchQueryCallback = new TouchQueryCallback();
-
     // physical units, semi-side of a square around the touch point
     private final static float POINTER_SIZE = 0.5f;
 
@@ -69,7 +66,7 @@ public class TouchConsumer {
         this.touchedFixture = null;
         this.gw.getWorld().queryAABB(this.touchQueryCallback, x - POINTER_SIZE, y - POINTER_SIZE, x + POINTER_SIZE, y + POINTER_SIZE);
         if (this.touchedFixture != null) {
-            // From fixture to GO
+            // from fixture to GO
             Body touchedBody = this.touchedFixture.getBody();
             Object userData = touchedBody.getUserData();
             if (userData != null) {
@@ -85,9 +82,9 @@ public class TouchConsumer {
                 } else {
                     if (this.oldObject != null) {
                         if (this.oldObject instanceof Anchor)
-                            ((Anchor) this.oldObject).setColor(false);
+                            ((Anchor) this.oldObject).setAnchorColor(false);
                         else if (this.oldObject instanceof Bridge)
-                            ((Bridge) this.oldObject).setColor(false);
+                            ((Bridge) this.oldObject).setBridgeAnchorColor(false);
                         this.oldObject = null;
                     }
                     if (touchedGO instanceof DynamicBoxGO) {
@@ -101,30 +98,30 @@ public class TouchConsumer {
     private void objectIsBridge(GameObject touchedGO) {
         if (this.oldObject != null && this.oldObject instanceof Anchor) {
             this.gw.addReinforcement(this.oldObject, touchedGO);
-            ((Anchor) this.oldObject).setColor(false);
+            ((Anchor) this.oldObject).setAnchorColor(false);
             this.oldObject = null;
         } else {
             if (this.oldObject != null && this.oldObject instanceof Bridge && ((Bridge) this.oldObject).getHasAnchor())
-                ((Bridge) this.oldObject).setColor(false);
+                ((Bridge) this.oldObject).setBridgeAnchorColor(false);
             this.oldObject = touchedGO;
-            ((Bridge) touchedGO).setColor(true);
+            ((Bridge) touchedGO).setBridgeAnchorColor(true);
         }
     }
 
     private void objectIsAnchor(GameObject touchedGO) {
         if (this.oldObject != null && this.oldObject instanceof Bridge && ((Bridge) this.oldObject).getHasAnchor()) {
             this.gw.addReinforcement(touchedGO, this.oldObject);
-            ((Bridge) this.oldObject).setColor(false);
+            ((Bridge) this.oldObject).setBridgeAnchorColor(false);
             this.oldObject = null;
         } else {
             if (this.oldObject != null && this.oldObject instanceof Anchor)
-                ((Anchor) this.oldObject).setColor(false);
+                ((Anchor) this.oldObject).setAnchorColor(false);
             this.oldObject = touchedGO;
-            ((Anchor) touchedGO).setColor(true);
+            ((Anchor) touchedGO).setAnchorColor(true);
         }
     }
 
-    // Set up a mouse joint between the touched GameObject and the touch coordinates (x,y)
+    // set up a mouse joint between the touched GameObject and the touch coordinates (x,y)
     private void setupMouseJoint(float x, float y, Body touchedBody) {
         MouseJointDef mouseJointDef = new MouseJointDef();
         mouseJointDef.setBodyA(touchedBody);
