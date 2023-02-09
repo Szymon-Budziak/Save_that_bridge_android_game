@@ -10,6 +10,7 @@ public class Collision {
         this.b = b;
     }
 
+    // getters
     public GameObject getA() {
         return this.a;
     }

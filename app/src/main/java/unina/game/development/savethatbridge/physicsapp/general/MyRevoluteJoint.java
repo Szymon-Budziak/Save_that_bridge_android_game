@@ -19,6 +19,7 @@ public class MyRevoluteJoint {
         jointDef.delete();
     }
 
+    // getters
     public Joint getJoint() {
         return this.joint;
     }

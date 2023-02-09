@@ -16,22 +16,19 @@ public class EnclosureGO extends GameObject {
         // a body definition: position and type
         BodyDef bodyDef = new BodyDef();
 
-        // default position is (0,0) and default type is staticBody
+        // a body, default position is (0,0) and default type is staticBody
         this.body = gw.getWorld().createBody(bodyDef);
-        this.name = "Enclosure";
+        this.name = "EnclosureGO";
         this.body.setUserData(this);
 
+        // enclosurego's shape
         PolygonShape polygonShape = new PolygonShape();
-        // top
         polygonShape.setAsBox(xMax - xMin, THICKNESS, xMin + (xMax - xMin) / 2, yMin, 0);
-        this.body.createFixture(polygonShape, 0); // no density needed
-        // bottom
+        this.body.createFixture(polygonShape, 0);
         polygonShape.setAsBox(xMax - xMin, THICKNESS, xMin + (xMax - xMin) / 2, yMax, 0);
         this.body.createFixture(polygonShape, 0);
-        // left
         polygonShape.setAsBox(THICKNESS, yMax - yMin, xMin, yMin + (yMax - yMin) / 2, 0);
         this.body.createFixture(polygonShape, 0);
-        // right
         polygonShape.setAsBox(THICKNESS, yMax - yMin, xMax, yMin + (yMax - yMin) / 2, 0);
         this.body.createFixture(polygonShape, 0);
 
@@ -40,6 +37,7 @@ public class EnclosureGO extends GameObject {
         polygonShape.delete();
     }
 
+    // draw enclosurego
     @Override
     public void draw(Bitmap buffer, float x, float y, float angle) {
     }

@@ -12,6 +12,7 @@ public class Box {
         this.width = xMax - xMin;
     }
 
+    // getters
     public float getxMin() {
         return this.xMin;
     }

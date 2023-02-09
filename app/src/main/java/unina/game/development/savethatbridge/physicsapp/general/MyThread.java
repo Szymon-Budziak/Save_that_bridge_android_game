@@ -43,10 +43,12 @@ public class MyThread extends Thread {
         }
     }
 
+    // getters
     public int getCounter() {
         return this.counter;
     }
 
+    // setters
     public void setCounter(int counter) {
         this.counter = counter;
     }
