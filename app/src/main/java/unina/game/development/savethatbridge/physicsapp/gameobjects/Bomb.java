@@ -18,33 +18,33 @@ import unina.game.development.savethatbridge.physicsapp.general.GameWorld;
 import unina.game.development.savethatbridge.physicsapp.general.MyRevoluteJoint;
 
 public class Bomb extends GameObject {
-    private static float screenSemiWidth, screenSemiHeight;
     private static int instances = 0;
 
     private final Canvas canvas;
     private final Paint paint;
-    private MyRevoluteJoint joint;
-    private final GameWorld gw;
-    private final float x, y;
-
     private final RectF dest = new RectF();
     private final Bitmap bitmap;
+    private final GameWorld gameWorld;
+    private MyRevoluteJoint joint;
+
+    private final float screenSemiWidth, screenSemiHeight;
+    private final float x, y;
 
     public Bomb(GameWorld gw, float x, float y, MyRevoluteJoint joint, Resources resources) {
         super(gw);
-
         instances++;
+
         this.x = x;
         this.y = y;
         this.joint = joint;
-        this.gw = gw;
+        this.gameWorld = gw;
 
         this.canvas = new Canvas(gw.getBuffer());
         this.paint = new Paint();
 
         float size = (resources.getInteger(R.integer.worldXMax) - resources.getInteger(R.integer.worldXMin)) / 20;
-        screenSemiHeight = gw.toPixelsYLength(size) / 2;
-        screenSemiWidth = gw.toPixelsXLength(size) / 2;
+        this.screenSemiHeight = gw.toPixelsYLength(size) / 2;
+        this.screenSemiWidth = gw.toPixelsXLength(size) / 2;
 
         // a body definition: position and type
         BodyDef bodyDef = new BodyDef();
@@ -57,13 +57,13 @@ public class Bomb extends GameObject {
         this.name = "Bomb" + instances;
         this.body.setUserData(this);
 
-        this.paint.setTextSize(150);
+        this.paint.setTextSize(200);
         this.paint.setStyle(Paint.Style.FILL_AND_STROKE);
 
-        // Prevents scaling
-        BitmapFactory.Options o = new BitmapFactory.Options();
-        o.inScaled = false;
-        this.bitmap = BitmapFactory.decodeResource(gw.getActivity().getResources(), R.drawable.bomb, o);
+        // prevents scaling and sets bomb to a picture
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inScaled = false;
+        this.bitmap = BitmapFactory.decodeResource(gw.getActivity().getResources(), R.drawable.bomb, options);
 
         // clean up native objects
         bodyDef.delete();
@@ -76,30 +76,37 @@ public class Bomb extends GameObject {
         GameWorld.getJointsToDestroy().add(this.joint.getJoint());
         GameWorld.getGameJoints().remove(this.joint);
         GameWorld.setOldObjectsRemoved(false);
-        this.gw.summonParticles(this.x, this.y);
+        this.gameWorld.summonParticles(this.x, this.y);
         this.joint = null;
     }
 
+    // draw bomb
     @Override
     public void draw(Bitmap buf, float x, float y, float angle) {
         this.canvas.save();
         this.canvas.rotate((float) Math.toDegrees(angle), x, y);
-        this.dest.left = x - screenSemiWidth;
+        this.dest.top = y - 2 * this.screenSemiHeight;
         this.dest.bottom = y;
-        this.dest.right = x + screenSemiWidth;
-        this.dest.top = y - 2 * screenSemiHeight;
+        this.dest.right = x + this.screenSemiWidth;
+        this.dest.left = x - this.screenSemiWidth;
         this.canvas.drawBitmap(this.bitmap, null, this.dest, null);
 
+        displayBombTimer();
+
+        this.canvas.restore();
+    }
+
+    // display bomb timer after the terrorist crosses the bridge
+    private void displayBombTimer() {
         if (GameWorld.timer == 3) {
             this.paint.setARGB(255, 255, 255, 0);
-            this.canvas.drawText("3", this.gw.getScreenSize().getxMax() / 7, this.gw.getScreenSize().getyMax() / 4, this.paint);
+            this.canvas.drawText("3", this.gameWorld.getScreenSize().getxMax() / 7, this.gameWorld.getScreenSize().getyMax() / 4, this.paint);
         } else if (GameWorld.timer == 2) {
-            this.paint.setARGB(255, 255, 150, 0);
-            this.canvas.drawText("2", this.gw.getScreenSize().getxMax() / 7, this.gw.getScreenSize().getyMax() / 4, this.paint);
+            this.paint.setARGB(255, 255, 125, 0);
+            this.canvas.drawText("2", this.gameWorld.getScreenSize().getxMax() / 7, this.gameWorld.getScreenSize().getyMax() / 4, this.paint);
         } else if (GameWorld.timer == 1) {
             this.paint.setARGB(255, 255, 0, 0);
-            this.canvas.drawText("1", this.gw.getScreenSize().getxMax() / 7, this.gw.getScreenSize().getyMax() / 4, this.paint);
+            this.canvas.drawText("1", this.gameWorld.getScreenSize().getxMax() / 7, this.gameWorld.getScreenSize().getyMax() / 4, this.paint);
         }
-        this.canvas.restore();
     }
 }

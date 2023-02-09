@@ -20,14 +20,14 @@ public class Bridge extends GameObject {
     private static final float density = 3f;
     private static final float friction = 0.1f;
     private static final float restitution = 0.4f;
-    private final float screenSemiHeight, screenSemiWidth;
     private static int instances = 0;
 
     private final Canvas canvas;
     private final Paint paint;
-
     private final RectF dest = new RectF();
     private final Bitmap bitmap;
+
+    private final float screenSemiHeight, screenSemiWidth;
     private boolean hasAnchor = false;
 
     public Bridge(GameWorld gw, float x, float y, float width, float height) {
@@ -50,6 +50,7 @@ public class Bridge extends GameObject {
         this.name = "Bridge" + instances;
         this.body.setUserData(this);
 
+        // bridge's shape
         PolygonShape polygonShape = new PolygonShape();
         polygonShape.setAsBox(width / 2, height / 2);
 
@@ -60,11 +61,12 @@ public class Bridge extends GameObject {
         fixtureDef.setDensity(density);
         this.body.createFixture(fixtureDef);
 
+        // color of the bridge anchors
         int color = Color.argb(200, 255, 0, 0);
         this.paint.setColor(color);
         this.paint.setStyle(Paint.Style.FILL_AND_STROKE);
 
-        // prevents scaling
+        // prevents scaling and sets bridge decks to a picture
         BitmapFactory.Options o = new BitmapFactory.Options();
         o.inScaled = false;
         this.bitmap = BitmapFactory.decodeResource(gw.getActivity().getResources(), R.drawable.box, o);
@@ -75,7 +77,13 @@ public class Bridge extends GameObject {
         fixtureDef.delete();
     }
 
-    public void setColor(boolean selected) {
+    // getters
+    public boolean getHasAnchor() {
+        return this.hasAnchor;
+    }
+
+    // setters
+    public void setBridgeAnchorColor(boolean selected) {
         int color;
         if (selected) {
             color = Color.argb(200, 0, 250, 0);
@@ -85,22 +93,19 @@ public class Bridge extends GameObject {
         this.paint.setColor(color);
     }
 
-    public boolean getHasAnchor() {
-        return this.hasAnchor;
-    }
-
     public void setHasAnchor(boolean hasAnchor) {
         this.hasAnchor = hasAnchor;
     }
 
+    // draw bridge
     @Override
     public void draw(Bitmap buf, float x, float y, float angle) {
         this.canvas.save();
         this.canvas.rotate((float) Math.toDegrees(angle), x, y);
-        this.dest.left = x - this.screenSemiWidth;
+        this.dest.top = y - this.screenSemiHeight;
         this.dest.bottom = y + this.screenSemiHeight;
         this.dest.right = x + this.screenSemiWidth;
-        this.dest.top = y - this.screenSemiHeight;
+        this.dest.left = x - this.screenSemiWidth;
         this.canvas.drawBitmap(this.bitmap, null, this.dest, null);
         if (this.hasAnchor)
             this.canvas.drawCircle(x, y, this.gw.toPixelsXLength(Anchor.getWidth() - 0.1f) / 2, this.paint);

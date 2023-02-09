@@ -13,13 +13,13 @@ import com.google.fpl.liquidfun.FixtureDef;
 import unina.game.development.savethatbridge.physicsapp.general.GameWorld;
 
 public class Anchor extends GameObject {
-    private static final float friction = 0f;
     private static final float width = 0.7f;
-    private final float screenSemiWidth;
+    private static final float friction = 0f;
     private static int instances = 0;
 
     private final Canvas canvas;
     private final Paint paint;
+    private final float screenSemiWidth;
 
     public Anchor(GameWorld gw, float x, float y) {
         super(gw);
@@ -40,6 +40,7 @@ public class Anchor extends GameObject {
         this.name = "Anchor" + instances;
         this.body.setUserData(this);
 
+        // anchor's shape
         CircleShape circleShape = new CircleShape();
         circleShape.setRadius(width / 2);
 
@@ -48,6 +49,7 @@ public class Anchor extends GameObject {
         fixtureDef.setFriction(friction);
         this.body.createFixture(fixtureDef);
 
+        // initial anchor color
         int color = Color.argb(200, 255, 0, 0);
         this.paint.setColor(color);
         this.paint.setStyle(Paint.Style.FILL_AND_STROKE);
@@ -58,7 +60,13 @@ public class Anchor extends GameObject {
         fixtureDef.delete();
     }
 
-    public void setColor(boolean selected) {
+    // getters
+    public static float getWidth() {
+        return width;
+    }
+
+    // setters
+    public void setAnchorColor(boolean selected) {
         int color;
         if (selected) {
             color = Color.argb(200, 0, 250, 0);
@@ -68,10 +76,7 @@ public class Anchor extends GameObject {
         this.paint.setColor(color);
     }
 
-    public static float getWidth() {
-        return width;
-    }
-
+    // draw anchor
     @Override
     public void draw(Bitmap buf, float x, float y, float angle) {
         this.canvas.save();

@@ -3,8 +3,6 @@ package unina.game.development.savethatbridge.physicsapp.gameobjects;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
-import android.os.Build;
-import android.util.Log;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -19,32 +17,28 @@ import com.google.fpl.liquidfun.ParticleSystem;
 import unina.game.development.savethatbridge.physicsapp.general.GameWorld;
 
 public class BombParticles extends GameObject {
-
-    private static final int BYTESPERPARTICLE = 8;
-
-    private static int bufferOffset;
-    private static boolean isLittleEndian;
-
-    private final byte[] particlePositions;
-    private final ByteBuffer particlePositionsBuffer;
+    private static final int PARTICLE_BYTES = 8;
+    private static final int bufferOffset = 4;
+    private static final boolean isLittleEndian = (ByteOrder.nativeOrder() == ByteOrder.LITTLE_ENDIAN);
 
     private final Canvas canvas;
     private final Paint paint;
-    private final ParticleSystem particleSystem;
-    private final ParticleGroup group;
 
-    static {
-        discoverEndianness();
-    }
+    // particles
+    private final ParticleSystem particleSystem;
+    private final ParticleGroup particleGroup;
+    private final byte[] particlePositions;
+    private final ByteBuffer particlePositionsBuffer;
 
     public BombParticles(GameWorld gw, float x, float y) {
         super(gw);
 
         this.canvas = new Canvas(gw.getBuffer());
-        this.particleSystem = gw.getParticleSystem();
         this.paint = new Paint();
         this.paint.setStyle(Paint.Style.FILL_AND_STROKE);
+        this.particleSystem = gw.getParticleSystem();
 
+        // shape of particles
         CircleShape circleShape = new CircleShape();
         circleShape.setRadius(2);
         circleShape.setPosition(x, y);
@@ -56,12 +50,13 @@ public class BombParticles extends GameObject {
         particleGroupDef.setFlags(ParticleFlag.powderParticle);
         particleGroupDef.setLifetime(3);
 
-        this.group = this.particleSystem.createParticleGroup(particleGroupDef);
+        this.particleGroup = this.particleSystem.createParticleGroup(particleGroupDef);
 
-        this.particlePositionsBuffer = ByteBuffer.allocateDirect(this.group.getParticleCount() * BYTESPERPARTICLE);
+        this.particlePositionsBuffer = ByteBuffer.allocateDirect(this.particleGroup.getParticleCount() * PARTICLE_BYTES);
         this.particlePositions = this.particlePositionsBuffer.array();
 
         this.body = null;
+
         // clean up native objects
         circleShape.delete();
         particleGroupDef.delete();
@@ -69,20 +64,18 @@ public class BombParticles extends GameObject {
 
     @Override
     public void draw(Bitmap buf, float _x, float _y, float _angle) {
-        this.particleSystem.copyPositionBuffer(0, this.group.getParticleCount(), this.particlePositionsBuffer);
+        this.particleSystem.copyPositionBuffer(0, this.particleGroup.getParticleCount(), this.particlePositionsBuffer);
 
-        createBombParticles(0, this.group.getParticleCount() / 2, 150, 150, 150, 3);
+        createBombParticles(0, this.particleGroup.getParticleCount() / 4, 255);
 
-        createBombParticles(this.group.getParticleCount() / 2, 4 * this.group.getParticleCount() / 6, 200, 200, 50, 4);
+        createBombParticles(this.particleGroup.getParticleCount() / 4, 2 * this.particleGroup.getParticleCount() / 4, 125);
 
-        createBombParticles(4 * this.group.getParticleCount() / 6, 5 * this.group.getParticleCount() / 6, 200, 50, 50, 4);
-
-        createBombParticles(5 * this.group.getParticleCount() / 6, this.group.getParticleCount(), 200, 150, 50, 4);
+        createBombParticles(2 * this.particleGroup.getParticleCount() / 4, 3 * this.particleGroup.getParticleCount() / 4, 0);
     }
 
-    private void createBombParticles(int start, int end, int red, int green, int blue, int radius) {
+    private void createBombParticles(int start, int end, int green) {
         float x, y;
-        this.paint.setARGB(255, red, green, blue);
+        this.paint.setARGB(255, 255, green, 0);
         for (int i = start; i < end; i++) {
             if (isLittleEndian) {
                 x = Float.intBitsToFloat(calculateXLittleEndian(i));
@@ -91,7 +84,7 @@ public class BombParticles extends GameObject {
                 x = Float.intBitsToFloat(calculateXBigEndian(i));
                 y = Float.intBitsToFloat(calculateYBigEndian(i));
             }
-            this.canvas.drawCircle(this.gw.worldToFrameBufferX(x), this.gw.worldToFrameBufferY(y), radius, this.paint);
+            this.canvas.drawCircle(this.gw.worldToFrameBufferX(x), this.gw.worldToFrameBufferY(y), 4, this.paint);
         }
     }
 
@@ -125,12 +118,5 @@ public class BombParticles extends GameObject {
         int thirdPart = (this.particlePositions[idx * 8 + 6] & 0xFF) << 8;
         int fourthPart = this.particlePositions[idx * 8 + 7] & 0xFF;
         return (firstPart | secondPart | thirdPart | fourthPart);
-    }
-
-    public static void discoverEndianness() {
-        isLittleEndian = (ByteOrder.nativeOrder() == ByteOrder.LITTLE_ENDIAN);
-        Log.d("DEBUG", "Build.FINGERPRINT=" + Build.FINGERPRINT);
-        Log.d("DEBUG", "Build.PRODUCT=" + Build.PRODUCT);
-        bufferOffset = 4;
     }
 }

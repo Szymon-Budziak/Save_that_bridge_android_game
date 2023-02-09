@@ -15,15 +15,17 @@ import com.google.fpl.liquidfun.Vec2;
 import unina.game.development.savethatbridge.physicsapp.general.GameWorld;
 
 public class Ball extends GameObject {
-    private static final float width = 1f, height = 1f, density = 0.7f;
+    private static final float width = 1f, height = 1f;
+    private static final float density = 0.7f;
     private static final float friction = 1f;
     private static final float restitution = 0.1f;
-    private static float screen_semi_width, screen_semi_height;
     private static int instances = 0;
 
     private final Canvas canvas;
     private final Paint paint;
     private final RectF dest = new RectF();
+
+    private final float screenSemiWidth, screenSemiHeight;
 
     public Ball(GameWorld gw, float x, float y) {
         super(gw);
@@ -31,8 +33,8 @@ public class Ball extends GameObject {
 
         this.canvas = new Canvas(gw.getBuffer());
         this.paint = new Paint();
-        screen_semi_height = gw.toPixelsYLength(height) / 2;
-        screen_semi_width = gw.toPixelsXLength(width) / 2;
+        this.screenSemiWidth = gw.toPixelsXLength(width) / 2;
+        this.screenSemiHeight = gw.toPixelsYLength(height) / 2;
 
         // a body definition: position and type
         BodyDef bodyDef = new BodyDef();
@@ -46,6 +48,7 @@ public class Ball extends GameObject {
         this.name = "Ball" + instances;
         this.body.setUserData(this);
 
+        // ball's shape
         CircleShape circleShape = new CircleShape();
         circleShape.setRadius(width / 2);
 
@@ -56,7 +59,8 @@ public class Ball extends GameObject {
         fixtureDef.setDensity(density);
         this.body.createFixture(fixtureDef);
 
-        int color = Color.argb(255, 10, 10, 10);
+        // color of the ball
+        int color = Color.argb(255, 0, 0, 0);
         this.paint.setColor(color);
         this.paint.setStyle(Paint.Style.FILL_AND_STROKE);
 
@@ -66,15 +70,16 @@ public class Ball extends GameObject {
         fixtureDef.delete();
     }
 
+    // draw ball
     @Override
     public void draw(Bitmap buf, float x, float y, float angle) {
         this.canvas.save();
         this.canvas.rotate((float) Math.toDegrees(angle), x, y);
-        this.dest.left = x - screen_semi_width;
-        this.dest.bottom = y + screen_semi_height;
-        this.dest.right = x + screen_semi_width;
-        this.dest.top = y - screen_semi_height;
-        this.canvas.drawCircle(x, y, screen_semi_width, this.paint);
+        this.dest.top = y - this.screenSemiHeight;
+        this.dest.bottom = y + this.screenSemiHeight;
+        this.dest.right = x + this.screenSemiWidth;
+        this.dest.left = x - this.screenSemiWidth;
+        this.canvas.drawCircle(x, y, this.screenSemiWidth, this.paint);
         this.canvas.restore();
     }
 }
