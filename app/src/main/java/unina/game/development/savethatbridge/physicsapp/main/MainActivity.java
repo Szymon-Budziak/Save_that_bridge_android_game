@@ -30,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
         Objects.requireNonNull(getSupportActionBar()).hide();
         setContentView(R.layout.activity_main);
 
-        // setup sound
+        // Setup sound
         setupSound();
 
         // Button to start the game

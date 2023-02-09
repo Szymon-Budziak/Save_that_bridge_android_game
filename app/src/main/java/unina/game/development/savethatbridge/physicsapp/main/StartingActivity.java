@@ -12,7 +12,6 @@ import android.view.Window;
 import android.view.WindowManager;
 
 import java.nio.ByteOrder;
-import java.util.Objects;
 
 import unina.game.development.savethatbridge.R;
 import unina.game.development.savethatbridge.logic.Audio;
@@ -37,12 +36,11 @@ public class StartingActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         // load physics library
         System.loadLibrary("liquidfun");
         System.loadLibrary("liquidfun_jni");
 
-        // Load constants
+        // load constants
         Resources resources = this.getResources();
         this.xMax = resources.getInteger(R.integer.worldXMax);
         this.xMin = resources.getInteger(R.integer.worldXMin);
@@ -50,8 +48,7 @@ public class StartingActivity extends Activity {
         this.yMin = resources.getInteger(R.integer.worldYMin);
         // the tag used for logging
         String TAG = getString(R.string.app_name);
-
-        // Set fullscreen and no title
+        // set fullscreen and no title
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         this.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
@@ -62,21 +59,22 @@ public class StartingActivity extends Activity {
         // setup Game World
         setupGameWorld();
 
-        // Just for info
+        // just for info
         Display display = ((WindowManager) getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
         float refreshRate = display.getRefreshRate();
         Log.i(getString(R.string.app_name), "Refresh rate =" + refreshRate);
 
-        // View
+        // view
         this.renderView = new AndroidFastRenderView(this, this.gw);
         setContentView(this.renderView);
 
-        // Touch
+        // touch
         MultiTouchHandler touch = new MultiTouchHandler(this.renderView, 1, 1);
-        // Setter needed due to cyclic dependency
+
+        // setter needed due to cyclic dependency
         this.gw.setTouchHandler(touch);
 
-        // Unrelated to the rest, just to show interaction with another thread
+        // unrelated to the rest, just to show interaction with another thread
         this.t = new MyThread(this.gw);
         this.t.start();
 
@@ -100,7 +98,6 @@ public class StartingActivity extends Activity {
         Box worldSize = new Box(this.xMin, this.yMin, this.xMax, this.yMax);
         Box screenSize = new Box(0, 0, metrics.widthPixels, metrics.heightPixels);
         this.gw = new GameWorld(worldSize, screenSize, this);
-
         this.gw.nextLevel();
     }
 
