@@ -1,4 +1,6 @@
-package unina.game.development.savethatbridge.physicsapp.main;
+package unina.game.development.savethatbridge.physicsapp.activities;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -7,8 +9,6 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import java.util.Objects;
 
 import unina.game.development.savethatbridge.R;
@@ -16,7 +16,7 @@ import unina.game.development.savethatbridge.logic.Audio;
 import unina.game.development.savethatbridge.logic.Music;
 import unina.game.development.savethatbridge.logic.impl.AndroidAudio;
 
-public class MainActivity extends AppCompatActivity {
+public class EndActivity extends AppCompatActivity {
     private Music backgroundMusic;
 
     @Override
@@ -28,31 +28,31 @@ public class MainActivity extends AppCompatActivity {
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         this.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         Objects.requireNonNull(getSupportActionBar()).hide();
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_end);
 
         // Setup sound
         setupSound();
 
-        // Button to start the game
-        Button button = findViewById(R.id.startingButton);
+        // Button to play the game again
+        Button button = findViewById(R.id.playAgain);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 backgroundMusic.pause();
-                openStartingActivity();
+                playGameAgain();
             }
         });
     }
 
     private void setupSound() {
         Audio audio = new AndroidAudio(this);
-        this.backgroundMusic = audio.newMusic("mainBackground.wav");
+        this.backgroundMusic = audio.newMusic("congratulations.wav");
         this.backgroundMusic.setVolume(0.5f);
         this.backgroundMusic.setLooping(true);
         this.backgroundMusic.play();
     }
 
-    private void openStartingActivity() {
+    private void playGameAgain() {
         Intent intent = new Intent(this, StartingActivity.class);
         startActivity(intent);
     }

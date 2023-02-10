@@ -1,4 +1,4 @@
-package unina.game.development.savethatbridge.physicsapp.main;
+package unina.game.development.savethatbridge.physicsapp.activities;
 
 import android.app.Activity;
 import android.content.Context;
@@ -98,7 +98,7 @@ public class StartingActivity extends Activity {
         Box worldSize = new Box(this.xMin, this.yMin, this.xMax, this.yMax);
         Box screenSize = new Box(0, 0, metrics.widthPixels, metrics.heightPixels);
         this.gw = new GameWorld(worldSize, screenSize, this);
-        this.gw.nextLevel();
+        this.gw.setupNextLevel();
     }
 
     @Override
