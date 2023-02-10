@@ -25,7 +25,7 @@ public abstract class GameObject {
             float y = this.body.getPositionY();
             float angle = this.body.getAngle();
             // Cropping
-            Box view = this.gw.getCurrentView();
+            Box view = this.gw.getPhysicalSize();
             if (x > view.getxMin() && x < view.getxMax() && y > view.getyMin() && y < view.getyMax()) {
                 // Screen position
                 float screen_x = this.gw.setWorldToFrameX(x);

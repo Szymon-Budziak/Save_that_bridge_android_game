@@ -75,7 +75,7 @@ public class Bomb extends GameObject {
         explosion.play();
         GameWorld.getJointsToDestroy().add(this.joint.getJoint());
         GameWorld.getGameJoints().remove(this.joint);
-        GameWorld.setOldObjectsRemoved(false);
+        GameWorld.setPreviousObjectsDestroyed(false);
         this.gameWorld.summonBombParticles(this.x, this.y);
         this.joint = null;
     }
@@ -96,15 +96,15 @@ public class Bomb extends GameObject {
         this.canvas.restore();
     }
 
-    // display bomb timer after the terrorist crosses the bridge
+    // display bomb bombTimer after the terrorist crosses the bridge
     private void displayBombTimer() {
-        if (GameWorld.timer == 3) {
+        if (GameWorld.bombTimer == 3) {
             this.paint.setARGB(255, 255, 255, 0);
             this.canvas.drawText("3", this.gameWorld.getScreenSize().getxMax() / 7, this.gameWorld.getScreenSize().getyMax() / 4, this.paint);
-        } else if (GameWorld.timer == 2) {
+        } else if (GameWorld.bombTimer == 2) {
             this.paint.setARGB(255, 255, 125, 0);
             this.canvas.drawText("2", this.gameWorld.getScreenSize().getxMax() / 7, this.gameWorld.getScreenSize().getyMax() / 4, this.paint);
-        } else if (GameWorld.timer == 1) {
+        } else if (GameWorld.bombTimer == 1) {
             this.paint.setARGB(255, 255, 0, 0);
             this.canvas.drawText("1", this.gameWorld.getScreenSize().getxMax() / 7, this.gameWorld.getScreenSize().getyMax() / 4, this.paint);
         }
