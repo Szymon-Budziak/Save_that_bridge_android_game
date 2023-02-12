@@ -52,7 +52,7 @@ public class Level {
         initialSetup(world, 2);
 
         // adding anchors for bridges
-        addBridgeAnchors(world, 4);
+        addBridgeAnchors(world, 2);
 
         // adding anchors on roads
         addRoadAnchors(world, 2);
@@ -64,7 +64,7 @@ public class Level {
         createJoints(world, 2, 10);
 
         // creating bomb and terrorist
-        createTerroristAndBomb(world, 10, 8);
+        createTerroristAndBomb(world, 10, 4);
 
         GameWorld.setPlanksToPlace(2);
         GameWorld.bridgeConstructions = new ArrayList<>(GameWorld.getPlanksToPlace());
@@ -89,10 +89,8 @@ public class Level {
         GameWorld.gameBridgeAnchors.add(world.addGameObject(firstAnchor));
         GameWorld.gameBridgeAnchors.add(world.addGameObject(secondAnchor));
         if (numberOfRoadAnchors == 4) {
-            GameObject thirdAnchor = new Anchor(world, physicalSize.getxMin() + 10, physicalSize.getyMax() - 5);
             GameObject fourthAnchor = new Anchor(world, physicalSize.getxMax() - 10, physicalSize.getyMax() - 5);
 
-            GameWorld.gameBridgeAnchors.add(world.addGameObject(thirdAnchor));
             GameWorld.gameBridgeAnchors.add(world.addGameObject(fourthAnchor));
         }
     }
