@@ -13,11 +13,10 @@ import com.google.fpl.liquidfun.FixtureDef;
 import unina.game.development.savethatbridge.physicsapp.general.GameWorld;
 
 public class Anchor extends GameObject {
-    private static final float width = 0.7f;
-    private static final float friction = 0f;
+    private static final float WIDTH = 0.7f;
+    private static final float FRICTION = 0f;
     private static int instances = 0;
 
-    private final Canvas canvas;
     private final Paint paint;
     private final float screenSemiWidth;
 
@@ -25,9 +24,8 @@ public class Anchor extends GameObject {
         super(gw);
         instances++;
 
-        this.canvas = new Canvas(gw.getBitmapBuffer());
         this.paint = new Paint();
-        this.screenSemiWidth = gw.toPixelsXLength(width) / 2;
+        this.screenSemiWidth = gw.toPixelsXLength(WIDTH) / 2;
 
         // a body definition: position and type
         BodyDef bodyDef = new BodyDef();
@@ -42,11 +40,11 @@ public class Anchor extends GameObject {
 
         // anchor's shape
         CircleShape circleShape = new CircleShape();
-        circleShape.setRadius(width / 2);
+        circleShape.setRadius(WIDTH / 2);
 
         FixtureDef fixtureDef = new FixtureDef();
         fixtureDef.setShape(circleShape);
-        fixtureDef.setFriction(friction);
+        fixtureDef.setFriction(FRICTION);
         this.body.createFixture(fixtureDef);
 
         // initial anchor color
@@ -62,7 +60,7 @@ public class Anchor extends GameObject {
 
     // getters
     public static float getWidth() {
-        return width;
+        return WIDTH;
     }
 
     // setters
@@ -79,9 +77,11 @@ public class Anchor extends GameObject {
     // draw anchor
     @Override
     public void draw(Bitmap buf, float x, float y, float angle) {
-        this.canvas.save();
-        this.canvas.rotate((float) Math.toDegrees(angle), x, y);
-        this.canvas.drawCircle(x, y, this.screenSemiWidth, this.paint);
-        this.canvas.restore();
+        Canvas canvas = new Canvas(buf);
+
+        canvas.save();
+        canvas.rotate((float) Math.toDegrees(angle), x, y);
+        canvas.drawCircle(x, y, this.screenSemiWidth, this.paint);
+        canvas.restore();
     }
 }

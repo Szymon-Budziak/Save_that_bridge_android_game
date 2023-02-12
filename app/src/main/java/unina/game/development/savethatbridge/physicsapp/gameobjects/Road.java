@@ -72,9 +72,9 @@ public class Road extends GameObject {
         this.dest.bottom = 400;
         if (this.xMinRoad > 0) {
             this.dest.right = 600;
-            this.dest.left = 500;
+            this.dest.left = 570;
         } else {
-            this.dest.right = 100;
+            this.dest.right = 30;
             this.dest.left = 0;
         }
         this.canvas.drawBitmap(this.bitmap, null, this.dest, null);

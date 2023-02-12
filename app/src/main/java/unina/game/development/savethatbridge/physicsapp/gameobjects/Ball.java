@@ -40,7 +40,7 @@ public class Ball extends GameObject {
         BodyDef bodyDef = new BodyDef();
         bodyDef.setPosition(x, y);
         bodyDef.setType(BodyType.dynamicBody);
-        bodyDef.setAngularVelocity(10000.0F);
+        bodyDef.setLinearVelocity(new Vec2(15f, 15f));
 
         // a body
         this.body = gw.getWorld().createBody(bodyDef);

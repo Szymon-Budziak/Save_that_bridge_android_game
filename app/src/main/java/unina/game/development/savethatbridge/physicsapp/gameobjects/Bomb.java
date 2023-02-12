@@ -70,7 +70,7 @@ public class Bomb extends GameObject {
     }
 
     public synchronized void explode() {
-        Music explosion = ExplosionSound.getExplosion();
+        Music explosion = ExplosionSound.getSound();
         explosion.stop();
         explosion.play();
         GameWorld.getJointsToDestroy().add(this.joint.getJoint());
@@ -98,15 +98,18 @@ public class Bomb extends GameObject {
 
     // display bomb bombTimer after the terrorist crosses the bridge
     private void displayBombTimer() {
-        if (GameWorld.bombTimer == 3) {
+        if (GameWorld.bombTimer == 4) {
             this.paint.setARGB(255, 255, 255, 0);
             this.canvas.drawText("3", this.gameWorld.getScreenSize().getxMax() / 7, this.gameWorld.getScreenSize().getyMax() / 4, this.paint);
-        } else if (GameWorld.bombTimer == 2) {
+        } else if (GameWorld.bombTimer == 3) {
             this.paint.setARGB(255, 255, 125, 0);
             this.canvas.drawText("2", this.gameWorld.getScreenSize().getxMax() / 7, this.gameWorld.getScreenSize().getyMax() / 4, this.paint);
-        } else if (GameWorld.bombTimer == 1) {
+        } else if (GameWorld.bombTimer == 2) {
             this.paint.setARGB(255, 255, 0, 0);
             this.canvas.drawText("1", this.gameWorld.getScreenSize().getxMax() / 7, this.gameWorld.getScreenSize().getyMax() / 4, this.paint);
+        } else if (GameWorld.bombTimer == 1) {
+            this.paint.setARGB(255, 255, 0, 0);
+            this.canvas.drawText("BOOM", this.gameWorld.getScreenSize().getxMax() / 100, this.gameWorld.getScreenSize().getyMax() / 4, this.paint);
         }
     }
 }
