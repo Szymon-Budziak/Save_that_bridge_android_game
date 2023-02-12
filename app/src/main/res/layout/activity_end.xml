@@ -5,19 +5,7 @@
     android:layout_height="match_parent"
     android:background="@drawable/background"
     tools:context=".physicsapp.activities.EndActivity">
-
-    <Button
-        android:id="@+id/playAgain"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:backgroundTint="@color/bloody_red"
-        android:text="@string/play_again"
-        android:textColor="@color/white"
-        android:textSize="100px" />
-
-    <ImageView
+        <ImageView
         android:id="@+id/imageView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
