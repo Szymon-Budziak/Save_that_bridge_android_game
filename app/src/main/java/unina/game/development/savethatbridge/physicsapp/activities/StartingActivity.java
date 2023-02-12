@@ -23,7 +23,6 @@ import unina.game.development.savethatbridge.physicsapp.general.Box;
 import unina.game.development.savethatbridge.physicsapp.general.GameWorld;
 import unina.game.development.savethatbridge.physicsapp.general.MyThread;
 import unina.game.development.savethatbridge.physicsapp.sounds.BallSound;
-import unina.game.development.savethatbridge.physicsapp.sounds.CollisionSounds;
 import unina.game.development.savethatbridge.physicsapp.sounds.ExplosionSound;
 
 public class StartingActivity extends Activity {
@@ -83,9 +82,8 @@ public class StartingActivity extends Activity {
 
     private void setupSound() {
         Audio audio = new AndroidAudio(this);
-        CollisionSounds.init(audio);
-        ExplosionSound.init(audio);
-        BallSound.init(audio);
+        ExplosionSound.initialize(audio);
+        BallSound.initialize(audio);
         this.backgroundMusic = audio.newMusic("soundtrack.mp3");
         this.backgroundMusic.setVolume(0.5f);
         this.backgroundMusic.setLooping(true);
