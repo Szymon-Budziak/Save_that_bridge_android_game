@@ -2,14 +2,17 @@ package unina.game.development.savethatbridge.physicsapp.activities;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Button;
 
 import java.nio.ByteOrder;
 
@@ -78,6 +81,17 @@ public class StartingActivity extends Activity {
         this.t.start();
 
         Log.i(getString(R.string.app_name), "onCreate complete, Endianness = " + (ByteOrder.nativeOrder() == ByteOrder.BIG_ENDIAN ? "Big Endian" : "Little Endian"));
+    }
+
+    public void restartGame() {
+        Button button = findViewById(R.id.playAgain);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(StartingActivity.this, StartingActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
     private void setupSound() {
