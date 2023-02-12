@@ -14,17 +14,25 @@
         android:theme="@style/Theme.SaveThatBridge"
         tools:targetApi="31">
         <activity
-            android:name="unina.game.development.savethatbridge.physicsapp.main.StartingActivity"
+            android:name="unina.game.development.savethatbridge.physicsapp.activities.EndActivity"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
         <activity
-            android:name="unina.game.development.savethatbridge.physicsapp.main.MainActivity"
+            android:name="unina.game.development.savethatbridge.physicsapp.activities.StartingActivity"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
+            android:name="unina.game.development.savethatbridge.physicsapp.activities.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
 
