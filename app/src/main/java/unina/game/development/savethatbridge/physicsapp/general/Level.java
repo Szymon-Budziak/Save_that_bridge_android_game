@@ -5,6 +5,7 @@ import android.graphics.BitmapFactory;
 import java.util.ArrayList;
 
 import unina.game.development.savethatbridge.R;
+import unina.game.development.savethatbridge.physicsapp.activities.StartingActivity;
 import unina.game.development.savethatbridge.physicsapp.gameobjects.Anchor;
 import unina.game.development.savethatbridge.physicsapp.gameobjects.Bomb;
 import unina.game.development.savethatbridge.physicsapp.gameobjects.Bridge;
@@ -52,46 +53,56 @@ public class Level {
         initialSetup(world, 2);
 
         // adding anchors for bridges
-        addBridgeAnchors(world, 2);
+        addBridgeAnchors(world, 3);
 
         // adding anchors on roads
-        addRoadAnchors(world, 2);
+        addRoadAnchors(world, 3);
 
         // adding bridge decks and creating them
-        addBridgeDecks(world, 10);
+        addBridgeDecks(world, 12);
 
         // creating joints between roads and bridge decks
-        createJoints(world, 2, 10);
+        createJoints(world, 3, 12);
 
         // creating bomb and terrorist
-        createTerroristAndBomb(world, 10, 4);
+        createTerroristAndBomb(world, 12, 4);
 
-        GameWorld.setPlanksToPlace(2);
+        GameWorld.setPlanksToPlace(3);
         GameWorld.bridgeConstructions = new ArrayList<>(GameWorld.getPlanksToPlace());
     }
 
+    public void endLevel(GameWorld world) {
+        // prevents scaling and sets end level background to a picture
+        initialSetup(world, 3);
+
+        // change music
+        StartingActivity activity = world.getActivity();
+        activity.setupSound(true);
+    }
+
     private void initialSetup(GameWorld world, int level) {
-        BitmapFactory.Options o = new BitmapFactory.Options();
-        o.inScaled = false;
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inScaled = false;
         if (level == 1)
-            world.setBitmap(BitmapFactory.decodeResource(world.getActivity().getResources(), R.drawable.background_l1, o));
+            world.setBitmap(BitmapFactory.decodeResource(world.getActivity().getResources(), R.drawable.background_l1, options));
         else if (level == 2)
-            world.setBitmap(BitmapFactory.decodeResource(world.getActivity().getResources(), R.drawable.background_l2, o));
+            world.setBitmap(BitmapFactory.decodeResource(world.getActivity().getResources(), R.drawable.background_l2, options));
+        else
+            world.setBitmap(BitmapFactory.decodeResource(world.getActivity().getResources(), R.drawable.end_background, options));
         GameWorld.setCanPlace(true);
         GameWorld.setWorldBorder(world.addGameObject(new EnclosureGO(world, physicalSize.getxMin(), physicalSize.getxMax(), physicalSize.getyMin(), physicalSize.getyMax())));
     }
 
     private void addBridgeAnchors(GameWorld world, int numberOfRoadAnchors) {
         GameWorld.gameBridgeAnchors = new ArrayList<>(numberOfRoadAnchors);
-        GameObject firstAnchor = new Anchor(world, -this.bridgeLength / 2, physicalSize.getyMax() - 7);
-        GameObject secondAnchor = new Anchor(world, this.bridgeLength / 2, physicalSize.getyMax() - 7);
+        GameObject firstAnchor = new Anchor(world, -this.bridgeLength / 2 + 3, physicalSize.getyMax() - 7);
+        GameObject secondAnchor = new Anchor(world, this.bridgeLength / 2 - 3, physicalSize.getyMax() - 7);
 
         GameWorld.gameBridgeAnchors.add(world.addGameObject(firstAnchor));
         GameWorld.gameBridgeAnchors.add(world.addGameObject(secondAnchor));
-        if (numberOfRoadAnchors == 4) {
-            GameObject fourthAnchor = new Anchor(world, physicalSize.getxMax() - 10, physicalSize.getyMax() - 5);
-
-            GameWorld.gameBridgeAnchors.add(world.addGameObject(fourthAnchor));
+        if (numberOfRoadAnchors == 3) {
+            GameObject thirdAnchor = new Anchor(world, physicalSize.getxMax() - 10, physicalSize.getyMax() - 5);
+            GameWorld.gameBridgeAnchors.add(world.addGameObject(thirdAnchor));
         }
     }
 
