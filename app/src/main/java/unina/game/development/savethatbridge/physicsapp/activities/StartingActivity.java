@@ -2,17 +2,14 @@ package unina.game.development.savethatbridge.physicsapp.activities;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
-import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.Button;
 
 import java.nio.ByteOrder;
 
@@ -83,23 +80,12 @@ public class StartingActivity extends Activity {
         Log.i(getString(R.string.app_name), "onCreate complete, Endianness = " + (ByteOrder.nativeOrder() == ByteOrder.BIG_ENDIAN ? "Big Endian" : "Little Endian"));
     }
 
-    public void restartGame() {
-        Button button = findViewById(R.id.playAgain);
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(StartingActivity.this, StartingActivity.class);
-                startActivity(intent);
-            }
-        });
-    }
-
     private void setupSound() {
         Audio audio = new AndroidAudio(this);
         ExplosionSound.initialize(audio);
         BallSound.initialize(audio);
         this.backgroundMusic = audio.newMusic("soundtrack.mp3");
-        this.backgroundMusic.setVolume(0.5f);
+        this.backgroundMusic.setVolume(0.7f);
         this.backgroundMusic.setLooping(true);
         this.backgroundMusic.play();
     }
@@ -138,10 +124,8 @@ public class StartingActivity extends Activity {
     public void onResume() {
         super.onResume();
         Log.i("Main thread", "resume");
-
         this.renderView.resume(); // starts game loop in a separate thread
         this.backgroundMusic.play();
-
         // persistence example
         SharedPreferences pref = getPreferences(Context.MODE_PRIVATE);
         int counter = pref.getInt(getString(R.string.important_info), -1); // default value

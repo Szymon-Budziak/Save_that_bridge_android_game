@@ -22,17 +22,14 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         // Set fullscreen and no title
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         this.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         Objects.requireNonNull(getSupportActionBar()).hide();
         setContentView(R.layout.activity_main);
-
         // Setup sound
         setupSound();
-
         // Button to start the game
         Button button = findViewById(R.id.startingButton);
         button.setOnClickListener(new View.OnClickListener() {
@@ -47,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
     private void setupSound() {
         Audio audio = new AndroidAudio(this);
         this.backgroundMusic = audio.newMusic("mainBackground.wav");
-        this.backgroundMusic.setVolume(0.5f);
+        this.backgroundMusic.setVolume(0.7f);
         this.backgroundMusic.setLooping(true);
         this.backgroundMusic.play();
     }
