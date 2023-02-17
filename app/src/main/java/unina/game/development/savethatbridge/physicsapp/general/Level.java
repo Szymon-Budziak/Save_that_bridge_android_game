@@ -53,7 +53,7 @@ public class Level {
         initialSetup(world, 2);
 
         // adding anchors for bridges
-        addBridgeAnchors(world, 3);
+        addBridgeAnchors(world, 4);
 
         // adding anchors on roads
         addRoadAnchors(world, 3);
@@ -100,9 +100,12 @@ public class Level {
 
         GameWorld.gameBridgeAnchors.add(world.addGameObject(firstAnchor));
         GameWorld.gameBridgeAnchors.add(world.addGameObject(secondAnchor));
-        if (numberOfRoadAnchors == 3) {
-            GameObject thirdAnchor = new Anchor(world, physicalSize.getxMax() - 10, physicalSize.getyMax() - 5);
+        if (numberOfRoadAnchors == 4) {
+            GameObject thirdAnchor = new Anchor(world, physicalSize.getxMax() - 10, physicalSize.getyMax() - 4);
+            GameObject fourthAnchor = new Anchor(world, physicalSize.getxMin() + 10, physicalSize.getyMax() - 4);
+
             GameWorld.gameBridgeAnchors.add(world.addGameObject(thirdAnchor));
+            GameWorld.gameBridgeAnchors.add(world.addGameObject(fourthAnchor));
         }
     }
 
