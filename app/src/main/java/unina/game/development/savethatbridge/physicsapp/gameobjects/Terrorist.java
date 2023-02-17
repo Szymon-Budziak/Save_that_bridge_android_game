@@ -29,8 +29,8 @@ public class Terrorist extends GameObject {
 
     public Terrorist(GameWorld gw, float x, float y) {
         super(gw);
-        int width = 2;
-        int height = 2;
+        int width = 3;
+        int height = 3;
 
         this.canvas = new Canvas(gw.getBitmapBuffer());
         this.src = new Rect(0, 150, FRAME_WIDTH, 200);
@@ -50,38 +50,33 @@ public class Terrorist extends GameObject {
         this.body.setUserData(this);
 
         // prevents scaling and sets terrorist to a picture
-        BitmapFactory.Options o = new BitmapFactory.Options();
-        o.inScaled = false;
-        this.bitmap = BitmapFactory.decodeResource(gw.getActivity().getResources(), R.drawable.terrorist, o);
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inScaled = false;
+        this.bitmap = BitmapFactory.decodeResource(gw.getActivity().getResources(), R.drawable.terrorist, options);
 
         // clean up native objects
         bodyDef.delete();
     }
 
-    private void updateAnimation() {
+    private void updateSprite() {
         this.src.left = this.sprite * FRAME_WIDTH;
         this.src.right = this.sprite * FRAME_WIDTH + FRAME_WIDTH;
-        if (this.sprite == 7) this.sprite = 0;
-        else this.sprite++;
+        this.sprite = (this.sprite + 1) % 8;
     }
 
     // draw terrorist
     @Override
     public void draw(Bitmap buf, float x, float y, float angle) {
+        this.updateTime++;
         if (this.updateTime == 6) {
-            updateAnimation();
+            updateSprite();
             this.updateTime = 0;
         }
-        this.updateTime++;
 
-        if (!this.allBombsPlanted && this.body.getPositionX() > GameWorld.getBomb().body.getPositionX()) {
-            AndroidFastRenderView.setSpawnBomb(true);
-            this.allBombsPlanted = true;
-        }
+        checkBombPlanted();
 
-        if (this.body.getPositionX() > this.gw.getPhysicalSize().getxMax() - 1) {
-            AndroidFastRenderView.setRemoveTerrorist(true);
-        }
+        checkRemoveTerrorist();
+
         this.canvas.save();
         this.canvas.rotate((float) Math.toDegrees(angle), x, y);
         this.dest.top = y - this.screenSemiHeight;
@@ -90,5 +85,18 @@ public class Terrorist extends GameObject {
         this.dest.left = x - this.screenSemiWidth;
         this.canvas.drawBitmap(this.bitmap, this.src, this.dest, null);
         this.canvas.restore();
+    }
+
+    private void checkBombPlanted() {
+        if (!this.allBombsPlanted && this.body.getPositionX() > GameWorld.getBomb().body.getPositionX()) {
+            AndroidFastRenderView.setSpawnBomb(true);
+            this.allBombsPlanted = true;
+        }
+    }
+
+    private void checkRemoveTerrorist() {
+        if (this.body.getPositionX() > this.gw.getPhysicalSize().getxMax() - 1) {
+            AndroidFastRenderView.setRemoveTerrorist(true);
+        }
     }
 }
