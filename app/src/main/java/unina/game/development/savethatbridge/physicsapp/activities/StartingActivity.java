@@ -53,7 +53,7 @@ public class StartingActivity extends Activity {
         this.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         // setup sound
-        setupSound();
+        setupSound(false);
 
         // setup Game World
         setupGameWorld();
@@ -80,11 +80,15 @@ public class StartingActivity extends Activity {
         Log.i(getString(R.string.app_name), "onCreate complete, Endianness = " + (ByteOrder.nativeOrder() == ByteOrder.BIG_ENDIAN ? "Big Endian" : "Little Endian"));
     }
 
-    private void setupSound() {
+    public void setupSound(boolean isEndingMusic) {
         Audio audio = new AndroidAudio(this);
         ExplosionSound.initialize(audio);
         BallSound.initialize(audio);
-        this.backgroundMusic = audio.newMusic("soundtrack.mp3");
+        if (isEndingMusic) {
+            this.backgroundMusic.stop();
+            this.backgroundMusic = audio.newMusic("congratulations.wav");
+        } else
+            this.backgroundMusic = audio.newMusic("soundtrack.mp3");
         this.backgroundMusic.setVolume(0.7f);
         this.backgroundMusic.setLooping(true);
         this.backgroundMusic.play();
