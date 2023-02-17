@@ -17,10 +17,10 @@ import com.google.fpl.liquidfun.PolygonShape;
 import unina.game.development.savethatbridge.physicsapp.general.GameWorld;
 
 public class Bridge extends GameObject {
-    private static final float density = 3f;
-    private static final float friction = 0.1f;
-    private static final float restitution = 0.4f;
-    private static int instances = 0;
+    private static final float DENSITY = 7f;
+    private static final float FRICTION = 0.1f;
+    private static final float RESTITUTION = 0.4f;
+    private static int INSTANCE_COUNT = 0;
 
     private final Canvas canvas;
     private final Paint paint;
@@ -32,7 +32,7 @@ public class Bridge extends GameObject {
 
     public Bridge(GameWorld gw, float x, float y, float width, float height) {
         super(gw);
-        instances++;
+        INSTANCE_COUNT++;
 
         this.canvas = new Canvas(gw.getBitmapBuffer());
         this.paint = new Paint();
@@ -47,7 +47,7 @@ public class Bridge extends GameObject {
         // a body
         this.body = gw.getWorld().createBody(bodyDef);
         this.body.setSleepingAllowed(false);
-        this.name = "Bridge" + instances;
+        this.name = "Bridge" + INSTANCE_COUNT;
         this.body.setUserData(this);
 
         // bridge's shape
@@ -56,9 +56,9 @@ public class Bridge extends GameObject {
 
         FixtureDef fixtureDef = new FixtureDef();
         fixtureDef.setShape(polygonShape);
-        fixtureDef.setFriction(friction);
-        fixtureDef.setRestitution(restitution);
-        fixtureDef.setDensity(density);
+        fixtureDef.setFriction(FRICTION);
+        fixtureDef.setRestitution(RESTITUTION);
+        fixtureDef.setDensity(DENSITY);
         this.body.createFixture(fixtureDef);
 
         // color of the bridge anchors
@@ -67,9 +67,9 @@ public class Bridge extends GameObject {
         this.paint.setStyle(Paint.Style.FILL_AND_STROKE);
 
         // prevents scaling and sets bridge decks to a picture
-        BitmapFactory.Options o = new BitmapFactory.Options();
-        o.inScaled = false;
-        this.bitmap = BitmapFactory.decodeResource(gw.getActivity().getResources(), R.drawable.box, o);
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inScaled = false;
+        this.bitmap = BitmapFactory.decodeResource(gw.getActivity().getResources(), R.drawable.box, options);
 
         // clean up native objects
         bodyDef.delete();

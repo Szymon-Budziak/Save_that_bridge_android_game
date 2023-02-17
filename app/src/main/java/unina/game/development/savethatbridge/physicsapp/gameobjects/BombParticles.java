@@ -5,7 +5,6 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 
 import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 
 import com.google.fpl.liquidfun.CircleShape;
 import com.google.fpl.liquidfun.ParticleFlag;
@@ -18,8 +17,7 @@ import unina.game.development.savethatbridge.physicsapp.general.GameWorld;
 
 public class BombParticles extends GameObject {
     private static final int PARTICLE_BYTES = 8;
-    private static final int bufferOffset = 4;
-    private static final boolean isLittleEndian = (ByteOrder.nativeOrder() == ByteOrder.LITTLE_ENDIAN);
+    private static final int BUFFER_OFFSET = 4;
 
     private final Canvas canvas;
     private final Paint paint;
@@ -35,7 +33,6 @@ public class BombParticles extends GameObject {
 
         this.canvas = new Canvas(gw.getBitmapBuffer());
         this.paint = new Paint();
-        this.paint.setStyle(Paint.Style.FILL_AND_STROKE);
         this.particleSystem = gw.getParticleSystem();
 
         // shape of particles
@@ -55,13 +52,12 @@ public class BombParticles extends GameObject {
         this.particlePositionsBuffer = ByteBuffer.allocateDirect(this.particleGroup.getParticleCount() * PARTICLE_BYTES);
         this.particlePositions = this.particlePositionsBuffer.array();
 
-        this.body = null;
-
         // clean up native objects
         circleShape.delete();
         particleGroupDef.delete();
     }
 
+    // draw particles
     @Override
     public void draw(Bitmap buf, float _x, float _y, float _angle) {
         this.particleSystem.copyPositionBuffer(0, this.particleGroup.getParticleCount(), this.particlePositionsBuffer);
@@ -74,49 +70,25 @@ public class BombParticles extends GameObject {
     }
 
     private void createBombParticles(int start, int end, int green) {
-        float x, y;
         this.paint.setARGB(255, 255, green, 0);
         for (int i = start; i < end; i++) {
-            if (isLittleEndian) {
-                x = Float.intBitsToFloat(calculateXLittleEndian(i));
-                y = Float.intBitsToFloat(calculateYLittleEndian(i));
-            } else {
-                x = Float.intBitsToFloat(calculateXBigEndian(i));
-                y = Float.intBitsToFloat(calculateYBigEndian(i));
-            }
+            float x = Float.intBitsToFloat(calculateX(i));
+            float y = Float.intBitsToFloat(calculateY(i));
             this.canvas.drawCircle(this.gw.setWorldToFrameX(x), this.gw.setWorldToFrameY(y), 4, this.paint);
         }
     }
 
-    private int calculateXLittleEndian(int idx) {
-        int firstPart = this.particlePositions[idx * 8 + bufferOffset] & 0xFF;
-        int secondPart = (this.particlePositions[idx * 8 + bufferOffset + 1] & 0xFF) << 8;
-        int thirdPart = (this.particlePositions[idx * 8 + bufferOffset + 2] & 0xFF) << 16;
-        int fourthPart = (this.particlePositions[idx * 8 + bufferOffset + 3] & 0xFF) << 24;
-        return (firstPart | secondPart | thirdPart | fourthPart);
+    private int getParticlePositionValue(int offset) {
+        return this.particlePositions[offset] & 0xFF | (this.particlePositions[offset + 1] & 0xFF) << 8 | (this.particlePositions[offset + 2] & 0xFF) << 16 | (this.particlePositions[offset + 3] & 0xFF) << 24;
     }
 
-    private int calculateXBigEndian(int idx) {
-        int firstPart = (this.particlePositions[idx * 8] & 0xFF) << 24;
-        int secondPart = (this.particlePositions[idx * 8 + 1] & 0xFF) << 16;
-        int thirdPart = (this.particlePositions[idx * 8 + 2] & 0xFF) << 8;
-        int fourthPart = this.particlePositions[idx * 8 + 3] & 0xFF;
-        return (firstPart | secondPart | thirdPart | fourthPart);
+    private int calculateX(int idx) {
+        int offset = idx * 8 + BUFFER_OFFSET;
+        return getParticlePositionValue(offset);
     }
 
-    private int calculateYLittleEndian(int idx) {
-        int firstPart = this.particlePositions[idx * 8 + bufferOffset + 4] & 0xFF;
-        int secondPart = (this.particlePositions[idx * 8 + bufferOffset + 5] & 0xFF) << 8;
-        int thirdPart = (this.particlePositions[idx * 8 + bufferOffset + 6] & 0xFF) << 16;
-        int fourthPart = (this.particlePositions[idx * 8 + bufferOffset + 7] & 0xFF) << 24;
-        return (firstPart | secondPart | thirdPart | fourthPart);
-    }
-
-    private int calculateYBigEndian(int idx) {
-        int firstPart = (this.particlePositions[idx * 8 + 4] & 0xFF) << 24;
-        int secondPart = (this.particlePositions[idx * 8 + 5] & 0xFF) << 16;
-        int thirdPart = (this.particlePositions[idx * 8 + 6] & 0xFF) << 8;
-        int fourthPart = this.particlePositions[idx * 8 + 7] & 0xFF;
-        return (firstPart | secondPart | thirdPart | fourthPart);
+    private int calculateY(int idx) {
+        int offset = idx * 8 + BUFFER_OFFSET;
+        return getParticlePositionValue(offset + 4);
     }
 }

@@ -15,11 +15,12 @@ import com.google.fpl.liquidfun.Vec2;
 import unina.game.development.savethatbridge.physicsapp.general.GameWorld;
 
 public class Ball extends GameObject {
-    private static final float width = 1f, height = 1f;
-    private static final float density = 0.7f;
-    private static final float friction = 1f;
-    private static final float restitution = 0.1f;
-    private static int instances = 0;
+    private static final float WIDTH = 1.5f;
+    private static final float HEIGHT = 1.5f;
+    private static final float DENSITY = 0.8f;
+    private static final float FRICTION = 1f;
+    private static final float RESTITUTION = 0.1f;
+    private static int INSTANCE_COUNT = 0;
 
     private final Canvas canvas;
     private final Paint paint;
@@ -29,34 +30,34 @@ public class Ball extends GameObject {
 
     public Ball(GameWorld gw, float x, float y) {
         super(gw);
-        instances++;
+        INSTANCE_COUNT++;
 
         this.canvas = new Canvas(gw.getBitmapBuffer());
         this.paint = new Paint();
-        this.screenSemiWidth = gw.toPixelsXLength(width) / 2;
-        this.screenSemiHeight = gw.toPixelsYLength(height) / 2;
+        this.screenSemiWidth = gw.toPixelsXLength(WIDTH) / 2;
+        this.screenSemiHeight = gw.toPixelsYLength(HEIGHT) / 2;
 
         // a body definition: position and type
         BodyDef bodyDef = new BodyDef();
         bodyDef.setPosition(x, y);
         bodyDef.setType(BodyType.dynamicBody);
-        bodyDef.setLinearVelocity(new Vec2(15f, 15f));
+        bodyDef.setLinearVelocity(new Vec2(12f, 12f));
 
         // a body
         this.body = gw.getWorld().createBody(bodyDef);
         this.body.setSleepingAllowed(false);
-        this.name = "Ball" + instances;
+        this.name = "Ball" + INSTANCE_COUNT;
         this.body.setUserData(this);
 
         // ball's shape
         CircleShape circleShape = new CircleShape();
-        circleShape.setRadius(width / 2);
+        circleShape.setRadius(WIDTH / 2);
 
         FixtureDef fixtureDef = new FixtureDef();
         fixtureDef.setShape(circleShape);
-        fixtureDef.setFriction(friction);
-        fixtureDef.setRestitution(restitution);
-        fixtureDef.setDensity(density);
+        fixtureDef.setFriction(FRICTION);
+        fixtureDef.setRestitution(RESTITUTION);
+        fixtureDef.setDensity(DENSITY);
         this.body.createFixture(fixtureDef);
 
         // color of the ball
