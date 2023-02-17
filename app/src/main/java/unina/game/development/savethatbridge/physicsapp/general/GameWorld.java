@@ -1,8 +1,5 @@
 package unina.game.development.savethatbridge.physicsapp.general;
 
-import android.app.Activity;
-import android.content.Context;
-import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -10,6 +7,7 @@ import android.graphics.RectF;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import unina.game.development.savethatbridge.R;
 
@@ -22,11 +20,8 @@ import com.google.fpl.liquidfun.World;
 import unina.game.development.savethatbridge.logic.Input;
 import unina.game.development.savethatbridge.logic.Music;
 import unina.game.development.savethatbridge.logic.impl.TouchHandler;
-import unina.game.development.savethatbridge.physicsapp.activities.EndActivity;
-import unina.game.development.savethatbridge.physicsapp.activities.MainActivity;
 import unina.game.development.savethatbridge.physicsapp.gameobjects.Ball;
 import unina.game.development.savethatbridge.physicsapp.gameobjects.Bomb;
-import unina.game.development.savethatbridge.physicsapp.gameobjects.BombParticles;
 import unina.game.development.savethatbridge.physicsapp.gameobjects.Anchor;
 import unina.game.development.savethatbridge.physicsapp.gameobjects.Bridge;
 import unina.game.development.savethatbridge.physicsapp.gameobjects.BridgeReinforcement;
@@ -54,15 +49,15 @@ public class GameWorld {
     private final ParticleSystem particleSystem;
 
     // GameObjects
-    private final ArrayList<GameObject> gameObjects;
+    private final ArrayList<GameObject> gameObjects = new ArrayList<>();
     private static GameObject ball;
     private final Music ballSound = BallSound.getSound();
 
     // bridge
     public static ArrayList<GameObject> road;
-    public static ArrayList<GameObject> bridge;
-    public static ArrayList<GameObject> gameBridgeAnchors;
-    public static ArrayList<GameObject> bridgeConstructions;
+    public static ArrayList<GameObject> bridge = new ArrayList<>();
+    public static ArrayList<GameObject> gameBridgeAnchors = new ArrayList<>();
+    public static ArrayList<GameObject> bridgeConstructions = new ArrayList<>();
     private static float deckHeight;
     private static float bridgeLength;
 
@@ -71,7 +66,7 @@ public class GameWorld {
     private static Terrorist terrorist;
 
     // joints
-    public static ArrayList<MyRevoluteJoint> gameJoints;
+    public static ArrayList<MyRevoluteJoint> gameJoints = new ArrayList<>();
     private static final ArrayList<Joint> jointsToDestroy = new ArrayList<>();
     private static final ArrayList<Body> objectsToDestroy = new ArrayList<>();
 
@@ -107,7 +102,6 @@ public class GameWorld {
         this.world.setContactListener(this.contactListener);
         this.touchConsumer = new TouchConsumer(this);
 
-        this.gameObjects = new ArrayList<>();
         this.canvas = new Canvas(this.bitmapBuffer);
         this.dest = new RectF();
         this.dest.top = 0;
@@ -126,10 +120,6 @@ public class GameWorld {
 
     public World getWorld() {
         return this.world;
-    }
-
-    public Box getScreenSize() {
-        return this.screenSize;
     }
 
     public Box getPhysicalSize() {
@@ -247,74 +237,95 @@ public class GameWorld {
     public synchronized void removeGameObject(GameObject obj) {
         if (obj != null) {
             objectsToDestroy.add(obj.body);
-            while (gameObjects.remove(obj)) {
-            }
+            gameObjects.remove(obj);
         }
     }
 
     public synchronized void removePreviousObjects() {
-        for (GameObject object : road) {
-            this.removeGameObject(object);
-        }
-        for (GameObject object : bridge) {
-            this.removeGameObject(object);
-        }
-        for (GameObject object : gameBridgeAnchors) {
-            this.removeGameObject(object);
-        }
-        for (GameObject object : bridgeConstructions) {
-            this.removeGameObject(object);
-        }
-        for (MyRevoluteJoint joint : gameJoints) {
-            jointsToDestroy.add(joint.getJoint());
-        }
-
-        this.removeGameObject(worldBorder);
+        removeObjects(road);
+        removeObjects(bridge);
+        removeObjects(gameBridgeAnchors);
+        removeObjects(bridgeConstructions);
+        addJointsToDestroy(gameJoints);
+        removeGameObject(worldBorder);
         setPreviousObjectsDestroyed(false);
         readyForNextLevel = false;
     }
 
-    public synchronized void update(float elapsedTime) {
-        // advance the physics simulation
-        this.world.step(elapsedTime, 8, 3, 3);
-
-        // handle joints to destroy
-        if (!getPreviousObjectsDestroyed()) {
-            for (Joint joint : jointsToDestroy) {
-                this.world.destroyJoint(joint);
-            }
-            jointsToDestroy.clear();
-
-            for (Body body : objectsToDestroy) {
-                this.world.destroyBody(body);
-            }
-            objectsToDestroy.clear();
-
-            setPreviousObjectsDestroyed(true);
-            if (!readyForNextLevel) readyForNextLevel = true;
+    private void removeObjects(List<GameObject> objects) {
+        for (GameObject object : objects) {
+            this.removeGameObject(object);
         }
+    }
 
-        // handle collisions
+    private void addJointsToDestroy(List<MyRevoluteJoint> joints) {
+        for (MyRevoluteJoint joint : joints) {
+            jointsToDestroy.add(joint.getJoint());
+        }
+    }
+
+    public synchronized void update(float elapsedTime) {
+        this.world.step(elapsedTime, 8, 3, 3);
+        handleJointsToDestroy();
         handleCollisions(this.contactListener.getCollisions());
+        handleTouchEvents();
+    }
 
-        // handle touch events
-        for (Input.TouchEvent event : this.touchHandler.getTouchEvents())
+    private void handleJointsToDestroy() {
+        if (!getPreviousObjectsDestroyed()) {
+            destroyJoints(jointsToDestroy);
+            destroyBodies(objectsToDestroy);
+            setPreviousObjectsDestroyed(true);
+            if (!readyForNextLevel) {
+                readyForNextLevel = true;
+            }
+        }
+    }
+
+    private void destroyJoints(List<Joint> joints) {
+        for (Joint joint : joints) {
+            this.world.destroyJoint(joint);
+        }
+        joints.clear();
+    }
+
+    private void destroyBodies(List<Body> bodies) {
+        for (Body body : bodies) {
+            this.world.destroyBody(body);
+        }
+        bodies.clear();
+    }
+
+    private void handleCollisions(Collection<Collision> collisions) {
+        for (Collision event : collisions) {
+            if (isEnclosureCollision(event)) {
+                if (isBallCollision(event) && !verified) {
+                    this.verifyWin(event.getA(), event.getB());
+                }
+            }
+        }
+    }
+
+    private boolean isEnclosureCollision(Collision event) {
+        return event.getA() instanceof EnclosureGO || event.getB() instanceof EnclosureGO;
+    }
+
+    private boolean isBallCollision(Collision event) {
+        return event.getA() instanceof Ball || event.getB() instanceof Ball;
+    }
+
+    private void handleTouchEvents() {
+        for (Input.TouchEvent event : this.touchHandler.getTouchEvents()) {
             this.touchConsumer.consumeTouchEvent(event);
+        }
     }
 
     public synchronized void render() {
         this.canvas.save();
         this.canvas.drawBitmap(this.bitmap, null, dest, null);
         this.canvas.restore();
-        for (GameObject obj : this.gameObjects)
+        for (GameObject obj : this.gameObjects) {
             obj.draw(this.bitmapBuffer);
-    }
-
-    private void handleCollisions(Collection<Collision> collisions) {
-        for (Collision event : collisions) {
-            if (event.getA() instanceof EnclosureGO || event.getB() instanceof EnclosureGO)
-                if ((event.getA() instanceof Ball || event.getB() instanceof Ball) && !verified)
-                    this.verifyWin(event.getA(), event.getB());
         }
     }
 
@@ -322,22 +333,15 @@ public class GameWorld {
         Level gameLevel = new Level(this);
         if (level == 1) gameLevel.level1(this);
         else if (level == 2) gameLevel.level2(this);
-        else {
-            activity.restartGame();
-        }
+        else gameLevel.endLevel(this);
     }
 
-    static synchronized void incrementLevel() {
+    public static synchronized void incrementLevel() {
         level++;
     }
 
-    static synchronized boolean getPreviousObjectsDestroyed() {
+    public static synchronized boolean getPreviousObjectsDestroyed() {
         return previousObjectsDestroyed;
-    }
-
-    public void summonBombParticles(float x, float y) {
-        BombParticles particles = new BombParticles(this, x, y);
-        this.addGameObject(particles);
     }
 
     public synchronized void addReinforcement(GameObject objectA, GameObject objectB) {
@@ -372,7 +376,6 @@ public class GameWorld {
         }
     }
 
-
     public synchronized void verifyLevel() {
         verified = false;
         canPlace = false;
@@ -382,10 +385,10 @@ public class GameWorld {
 
     synchronized void verifyWin(GameObject a, GameObject b) {
         verified = true;
-        AndroidFastRenderView.setWin((a instanceof EnclosureGO) ? b.body.getPositionY() < 0 : a != null && a.body.getPositionY() < 0);
+        AndroidFastRenderView.setHasWon((a instanceof EnclosureGO) ? b.body.getPositionY() < 0 : a != null && a.body.getPositionY() < 0);
         this.removeGameObject(ball);
         ballSound.stop();
-        AndroidFastRenderView.setVerifyWin(true);
+        AndroidFastRenderView.setIsWinVerified(true);
         setPreviousObjectsDestroyed(false);
     }
 
