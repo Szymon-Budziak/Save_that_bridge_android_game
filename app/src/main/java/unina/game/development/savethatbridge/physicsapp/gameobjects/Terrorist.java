@@ -89,14 +89,14 @@ public class Terrorist extends GameObject {
 
     private void checkBombPlanted() {
         if (!this.allBombsPlanted && this.body.getPositionX() > GameWorld.getBomb().body.getPositionX()) {
-            AndroidFastRenderView.setSpawnBomb(true);
+            AndroidFastRenderView.setIsSpawningBomb(true);
             this.allBombsPlanted = true;
         }
     }
 
     private void checkRemoveTerrorist() {
         if (this.body.getPositionX() > this.gw.getPhysicalSize().getxMax() - 1) {
-            AndroidFastRenderView.setRemoveTerrorist(true);
+            AndroidFastRenderView.setIsRemovingTerrorist(true);
         }
     }
 }

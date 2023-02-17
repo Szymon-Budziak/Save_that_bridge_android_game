@@ -10,10 +10,10 @@ import unina.game.development.savethatbridge.physicsapp.gameobjects.GameObject;
 
 public class MyThread extends Thread {
     private volatile int counter;
-    private final GameWorld gw;
+    private final GameWorld gameWorld;
 
     public MyThread(GameWorld gw) {
-        this.gw = gw;
+        this.gameWorld = gw;
     }
 
     private void testRayCasting() {
@@ -25,7 +25,7 @@ public class MyThread extends Thread {
                 return 1;
             }
         };
-        this.gw.getWorld().rayCast(listener, -10, 0, 10, 0);
+        this.gameWorld.getWorld().rayCast(listener, -10, 0, 10, 0);
     }
 
     @Override
