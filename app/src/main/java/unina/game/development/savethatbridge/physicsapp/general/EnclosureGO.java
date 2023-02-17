@@ -10,7 +10,7 @@ import unina.game.development.savethatbridge.physicsapp.gameobjects.GameObject;
 public class EnclosureGO extends GameObject {
     private static final float THICKNESS = 0;
 
-    public EnclosureGO(GameWorld gw, float xMin, float xMax, float yMin, float yMax) {
+    public EnclosureGO(GameWorld gw, float leftX, float rightX, float bottomY, float topY) {
         super(gw);
 
         // a body definition: position and type
@@ -23,13 +23,17 @@ public class EnclosureGO extends GameObject {
 
         // enclosurego's shape
         PolygonShape polygonShape = new PolygonShape();
-        polygonShape.setAsBox(xMax - xMin, THICKNESS, xMin + (xMax - xMin) / 2, yMin, 0);
+
+        // create the top and bottom sides of the enclosure
+        polygonShape.setAsBox(rightX - leftX, THICKNESS, leftX + (rightX - leftX) / 2, bottomY, 0);
         this.body.createFixture(polygonShape, 0);
-        polygonShape.setAsBox(xMax - xMin, THICKNESS, xMin + (xMax - xMin) / 2, yMax, 0);
+        polygonShape.setAsBox(rightX - leftX, THICKNESS, leftX + (rightX - leftX) / 2, topY, 0);
         this.body.createFixture(polygonShape, 0);
-        polygonShape.setAsBox(THICKNESS, yMax - yMin, xMin, yMin + (yMax - yMin) / 2, 0);
+
+        // create the left and right sides of the enclosure
+        polygonShape.setAsBox(THICKNESS, topY - bottomY, leftX, bottomY + (topY - bottomY) / 2, 0);
         this.body.createFixture(polygonShape, 0);
-        polygonShape.setAsBox(THICKNESS, yMax - yMin, xMax, yMin + (yMax - yMin) / 2, 0);
+        polygonShape.setAsBox(THICKNESS, topY - bottomY, rightX, bottomY + (topY - bottomY) / 2, 0);
         this.body.createFixture(polygonShape, 0);
 
         // clean up native objects
@@ -40,5 +44,6 @@ public class EnclosureGO extends GameObject {
     // draw enclosurego
     @Override
     public void draw(Bitmap buffer, float x, float y, float angle) {
+        // this method is empty since EnclosureGO does not need to be drawn
     }
 }

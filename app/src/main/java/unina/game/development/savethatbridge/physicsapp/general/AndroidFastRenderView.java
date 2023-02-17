@@ -12,7 +12,7 @@ import unina.game.development.savethatbridge.physicsapp.gameobjects.Bridge;
 import unina.game.development.savethatbridge.physicsapp.gameobjects.GameObject;
 
 public class AndroidFastRenderView extends SurfaceView implements Runnable {
-    private final GameWorld gameworld;
+    private final GameWorld gameWorld;
     private final Bitmap framebuffer;
     private final SurfaceHolder surfaceHolder;
     private final Rect dest = new Rect();
@@ -21,11 +21,11 @@ public class AndroidFastRenderView extends SurfaceView implements Runnable {
     private Thread renderThread = null;
     private volatile boolean running = false;
 
-    // level and win verification
-    private static boolean verifyLevel = false;
-    private static boolean nextLevel = false;
-    private static boolean verifyWin = false;
-    private static boolean win = false;
+    // level and hasWon verification
+    private static boolean isLevelVerified = false;
+    private static boolean isNextLevel = false;
+    private static boolean isWinVerified = false;
+    private static boolean hasWon = false;
 
     // player
     private static boolean hasPlayerStarted = false;
@@ -33,16 +33,16 @@ public class AndroidFastRenderView extends SurfaceView implements Runnable {
 
     // bombTimer
     private static int ballTimer = 0;
-    private static int timerVal = 10;
-    private static boolean decrTimerVal = false;
+    private static int totalGameTimer = 10;
+    private static boolean isDecreasingTimerValue = false;
 
     // terrorist and bomb
-    private static boolean removeTerrorist = false;
-    private static boolean spawnBomb = false;
+    private static boolean isRemovingTerrorist = false;
+    private static boolean isSpawningBomb = false;
 
     public AndroidFastRenderView(Context context, GameWorld gw) {
         super(context);
-        this.gameworld = gw;
+        this.gameWorld = gw;
         this.framebuffer = gw.getBitmapBuffer();
         this.surfaceHolder = getHolder();
     }
@@ -97,20 +97,10 @@ public class AndroidFastRenderView extends SurfaceView implements Runnable {
 
             verifyLevelAndWin(fpsDeltaTime);
 
+            checkGameTimeAndLaunchNextLevel(fpsDeltaTime);
 
-            if (decrTimerVal && fpsDeltaTime > 1) {
-                timerVal--;
-                if (timerVal == 0) {
-                    decrTimerVal = false;
-                    verifyWin = true;
-                    this.gameworld.verifyWin(null, null);
-                }
-            }
-
-            checkLaunchNextLevel();
-
-            this.gameworld.update(deltaTime);
-            this.gameworld.render();
+            this.gameWorld.update(deltaTime);
+            this.gameWorld.render();
 
             // Draw framebuffer on screen
             Canvas canvas = this.surfaceHolder.lockCanvas();
@@ -131,17 +121,17 @@ public class AndroidFastRenderView extends SurfaceView implements Runnable {
     }
 
     private void checkSpawnBomb() {
-        if (spawnBomb) {
-            this.gameworld.addGameObject(GameWorld.getBomb());
-            spawnBomb = false;
+        if (isSpawningBomb) {
+            this.gameWorld.addGameObject(GameWorld.getBomb());
+            isSpawningBomb = false;
         }
     }
 
     private void checkRemoveTerrorist() {
-        if (removeTerrorist) {
-            this.gameworld.removeGameObject(GameWorld.getTerrorist());
+        if (isRemovingTerrorist) {
+            this.gameWorld.removeGameObject(GameWorld.getTerrorist());
             GameWorld.setPreviousObjectsDestroyed(false);
-            removeTerrorist = false;
+            isRemovingTerrorist = false;
             hasPlayerStarted = true;
         }
     }
@@ -161,11 +151,11 @@ public class AndroidFastRenderView extends SurfaceView implements Runnable {
                 GameWorld.bombTimer--;
                 if (GameWorld.getBomb() != null && GameWorld.bombTimer == 0) {
                     GameWorld.getBomb().explode();
-                    this.gameworld.removeGameObject(GameWorld.getBomb());
+                    this.gameWorld.removeGameObject(GameWorld.getBomb());
                     GameWorld.setPreviousObjectsDestroyed(false);
                     GameWorld.setBomb(null);
                     hasPlayerFinished = false;
-                    verifyLevel = true;
+                    isLevelVerified = true;
                     GameWorld.bombTimer = 5;
                 }
             }
@@ -176,50 +166,58 @@ public class AndroidFastRenderView extends SurfaceView implements Runnable {
     }
 
     private void verifyLevelAndWin(float fpsDeltaTime) {
-        if (verifyLevel) {
+        if (isLevelVerified) {
             if (fpsDeltaTime > 1) {
                 ballTimer++;
                 if (ballTimer == 5) {
-                    this.gameworld.verifyLevel();
-                    verifyLevel = false;
+                    this.gameWorld.verifyLevel();
+                    isLevelVerified = false;
                     ballTimer = 0;
-                    decrTimerVal = true;
+                    isDecreasingTimerValue = true;
                 }
             }
         }
-        if (verifyWin) {
-            decrTimerVal = false;
-            timerVal = 10;
-            this.gameworld.removePreviousObjects();
-            if (win) {
+        if (isWinVerified) {
+            isDecreasingTimerValue = false;
+            totalGameTimer = 10;
+            this.gameWorld.removePreviousObjects();
+            if (hasWon) {
                 GameWorld.incrementLevel();
             }
-            verifyWin = false;
-            nextLevel = true;
+            isWinVerified = false;
+            isNextLevel = true;
         }
     }
 
-    private void checkLaunchNextLevel() {
-        if (nextLevel && GameWorld.isReadyForNextLevel()) {
-            this.gameworld.setupNextLevel();
-            nextLevel = false;
+    private void checkGameTimeAndLaunchNextLevel(float fpsDeltaTime) {
+        if (isDecreasingTimerValue && fpsDeltaTime > 1) {
+            totalGameTimer--;
+            if (totalGameTimer == 0) {
+                isDecreasingTimerValue = false;
+                isWinVerified = true;
+                this.gameWorld.verifyWin(null, null);
+            }
+        }
+        if (isNextLevel && GameWorld.isReadyForNextLevel()) {
+            this.gameWorld.setupNextLevel();
+            isNextLevel = false;
         }
     }
 
     // setters
-    public static void setRemoveTerrorist(boolean removeTerrorist) {
-        AndroidFastRenderView.removeTerrorist = removeTerrorist;
+    public static void setIsRemovingTerrorist(boolean isRemovingTerrorist) {
+        AndroidFastRenderView.isRemovingTerrorist = isRemovingTerrorist;
     }
 
-    public static void setVerifyWin(boolean verifyWin) {
-        AndroidFastRenderView.verifyWin = verifyWin;
+    public static void setIsWinVerified(boolean isWinVerified) {
+        AndroidFastRenderView.isWinVerified = isWinVerified;
     }
 
-    public static void setWin(boolean win) {
-        AndroidFastRenderView.win = win;
+    public static void setHasWon(boolean hasWon) {
+        AndroidFastRenderView.hasWon = hasWon;
     }
 
-    public static void setSpawnBomb(boolean spawnBomb) {
-        AndroidFastRenderView.spawnBomb = spawnBomb;
+    public static void setIsSpawningBomb(boolean isSpawningBomb) {
+        AndroidFastRenderView.isSpawningBomb = isSpawningBomb;
     }
 }
