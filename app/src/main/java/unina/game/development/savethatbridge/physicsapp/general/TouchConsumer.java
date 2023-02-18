@@ -91,7 +91,7 @@ public class TouchConsumer {
 
     private void handleBridgeWithAnchorTouch(GameObject touchedGameObject) {
         if (this.oldObject != null && this.oldObject instanceof Anchor) {
-            this.gameWorld.addReinforcement(this.oldObject, touchedGameObject);
+            this.gameWorld.addBridgeReinforcement(this.oldObject, touchedGameObject);
             ((Anchor) this.oldObject).setAnchorColor(false);
             this.oldObject = null;
         } else {
@@ -105,7 +105,7 @@ public class TouchConsumer {
 
     private void handleAnchorTouch(GameObject touchedGameObject) {
         if (this.oldObject != null && this.oldObject instanceof Bridge && ((Bridge) this.oldObject).getHasAnchor()) {
-            this.gameWorld.addReinforcement(touchedGameObject, this.oldObject);
+            this.gameWorld.addBridgeReinforcement(touchedGameObject, this.oldObject);
             ((Bridge) this.oldObject).setBridgeAnchorColor(false);
             this.oldObject = null;
         } else {

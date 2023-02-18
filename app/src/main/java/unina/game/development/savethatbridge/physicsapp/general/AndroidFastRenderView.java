@@ -31,9 +31,9 @@ public class AndroidFastRenderView extends SurfaceView implements Runnable {
     private static boolean hasPlayerStarted = false;
     private static boolean hasPlayerFinished = false;
 
-    // bombTimer
-    private static int ballTimer = 0;
-    private static int totalGameTimer = 10;
+    // timers
+    private static int bombTimer = 0;
+    private static int totalGameTimer = 0;
     private static boolean isDecreasingTimerValue = false;
 
     // terrorist and bomb
@@ -81,17 +81,9 @@ public class AndroidFastRenderView extends SurfaceView implements Runnable {
             float fpsDeltaTime = (currentTime - fpsTime) / 1000000000f;
             startTime = currentTime;
 
+            checkSpawnBombAndRemoveTerrorist();
 
-            checkSpawnBomb();
-
-            checkRemoveTerrorist();
-
-            checkPlayerStart();
-
-            if (GameWorld.getPlanksToPlace() == 0) {
-                hasPlayerFinished = true;
-                GameWorld.setPlanksToPlace(-1);
-            }
+            checkPlayerStartAndPlanksToPlace();
 
             checkPlayerFinish(fpsDeltaTime);
 
@@ -120,14 +112,11 @@ public class AndroidFastRenderView extends SurfaceView implements Runnable {
         }
     }
 
-    private void checkSpawnBomb() {
+    private void checkSpawnBombAndRemoveTerrorist() {
         if (isSpawningBomb) {
             this.gameWorld.addGameObject(GameWorld.getBomb());
             isSpawningBomb = false;
         }
-    }
-
-    private void checkRemoveTerrorist() {
         if (isRemovingTerrorist) {
             this.gameWorld.removeGameObject(GameWorld.getTerrorist());
             GameWorld.setPreviousObjectsDestroyed(false);
@@ -136,12 +125,15 @@ public class AndroidFastRenderView extends SurfaceView implements Runnable {
         }
     }
 
-    private void checkPlayerStart() {
+    private void checkPlayerStartAndPlanksToPlace() {
         if (hasPlayerStarted) {
-            for (GameObject object : GameWorld.getBridge()) {
+            for (GameObject object : GameWorld.getBridge())
                 ((Bridge) object).setHasAnchor(true);
-            }
             hasPlayerStarted = false;
+        }
+        if (GameWorld.getPlanksToPlace() == 0) {
+            hasPlayerFinished = true;
+            GameWorld.setPlanksToPlace(-1);
         }
     }
 
@@ -166,24 +158,21 @@ public class AndroidFastRenderView extends SurfaceView implements Runnable {
     }
 
     private void verifyLevelAndWin(float fpsDeltaTime) {
-        if (isLevelVerified) {
-            if (fpsDeltaTime > 1) {
-                ballTimer++;
-                if (ballTimer == 5) {
-                    this.gameWorld.verifyLevel();
-                    isLevelVerified = false;
-                    ballTimer = 0;
-                    isDecreasingTimerValue = true;
-                }
+        if (isLevelVerified && fpsDeltaTime > 1) {
+            bombTimer++;
+            if (bombTimer == 5) {
+                isDecreasingTimerValue = true;
+                isLevelVerified = false;
+                bombTimer = 0;
+                this.gameWorld.verifyLevel();
             }
         }
         if (isWinVerified) {
-            isDecreasingTimerValue = false;
-            totalGameTimer = 10;
-            this.gameWorld.removePreviousObjects();
-            if (hasWon) {
+            if (hasWon)
                 GameWorld.incrementLevel();
-            }
+            isDecreasingTimerValue = false;
+            totalGameTimer = 0;
+            this.gameWorld.removePreviousObjects();
             isWinVerified = false;
             isNextLevel = true;
         }
@@ -191,8 +180,8 @@ public class AndroidFastRenderView extends SurfaceView implements Runnable {
 
     private void checkGameTimeAndLaunchNextLevel(float fpsDeltaTime) {
         if (isDecreasingTimerValue && fpsDeltaTime > 1) {
-            totalGameTimer--;
-            if (totalGameTimer == 0) {
+            totalGameTimer++;
+            if (totalGameTimer == 10) {
                 isDecreasingTimerValue = false;
                 isWinVerified = true;
                 this.gameWorld.verifyWin(null, null);
