@@ -19,6 +19,12 @@ public class Level {
 
     private static Box physicalSize;
 
+    enum Levels {
+        LEVEL_1,
+        LEVEL_2,
+        END
+    }
+
     public Level(GameWorld world) {
         this.bridgeLength = GameWorld.getBridgeLength();
         this.deckHeight = GameWorld.getDeckHeight();
@@ -27,7 +33,7 @@ public class Level {
 
     public void level1(GameWorld world) {
         // prevents scaling and sets level 1 background to a picture
-        initialSetup(world, 1);
+        initialSetup(world, Levels.LEVEL_1);
 
         // adding anchors for bridges
         addBridgeAnchors(world, 2);
@@ -50,22 +56,22 @@ public class Level {
 
     public void level2(GameWorld world) {
         // prevents scaling and sets level 2 background to a picture
-        initialSetup(world, 2);
+        initialSetup(world, Levels.LEVEL_2);
 
         // adding anchors for bridges
-        addBridgeAnchors(world, 4);
+        addBridgeAnchors(world, 3);
 
         // adding anchors on roads
         addRoadAnchors(world, 3);
 
         // adding bridge decks and creating them
-        addBridgeDecks(world, 12);
+        addBridgeDecks(world, 15);
 
         // creating joints between roads and bridge decks
-        createJoints(world, 3, 12);
+        createJoints(world, 3, 15);
 
         // creating bomb and terrorist
-        createTerroristAndBomb(world, 12, 4);
+        createTerroristAndBomb(world, 15, 6);
 
         GameWorld.setPlanksToPlace(3);
         GameWorld.bridgeConstructions = new ArrayList<>(GameWorld.getPlanksToPlace());
@@ -73,58 +79,56 @@ public class Level {
 
     public void endLevel(GameWorld world) {
         // prevents scaling and sets end level background to a picture
-        initialSetup(world, 3);
+        initialSetup(world, Levels.END);
 
         // change music
         StartingActivity activity = world.getActivity();
         activity.setupSound(true);
     }
 
-    private void initialSetup(GameWorld world, int level) {
+    private void initialSetup(GameWorld world, Levels level) {
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inScaled = false;
-        if (level == 1)
-            world.setBitmap(BitmapFactory.decodeResource(world.getActivity().getResources(), R.drawable.background_l1, options));
-        else if (level == 2)
-            world.setBitmap(BitmapFactory.decodeResource(world.getActivity().getResources(), R.drawable.background_l2, options));
-        else
-            world.setBitmap(BitmapFactory.decodeResource(world.getActivity().getResources(), R.drawable.end_background, options));
+        switch (level) {
+            case LEVEL_1:
+                world.setBitmap(BitmapFactory.decodeResource(world.getActivity().getResources(), R.drawable.background_l1, options));
+                break;
+            case LEVEL_2:
+                world.setBitmap(BitmapFactory.decodeResource(world.getActivity().getResources(), R.drawable.background_l2, options));
+                break;
+            case END:
+                world.setBitmap(BitmapFactory.decodeResource(world.getActivity().getResources(), R.drawable.end_background, options));
+                break;
+            default:
+                throw new IllegalArgumentException("Invalid level: " + level);
+        }
         GameWorld.setCanPlace(true);
         GameWorld.setWorldBorder(world.addGameObject(new EnclosureGO(world, physicalSize.getxMin(), physicalSize.getxMax(), physicalSize.getyMin(), physicalSize.getyMax())));
     }
 
-    private void addBridgeAnchors(GameWorld world, int numberOfRoadAnchors) {
-        GameWorld.gameBridgeAnchors = new ArrayList<>(numberOfRoadAnchors);
-        GameObject firstAnchor = new Anchor(world, -this.bridgeLength / 2 + 3, physicalSize.getyMax() - 7);
-        GameObject secondAnchor = new Anchor(world, this.bridgeLength / 2 - 3, physicalSize.getyMax() - 7);
-
-        GameWorld.gameBridgeAnchors.add(world.addGameObject(firstAnchor));
-        GameWorld.gameBridgeAnchors.add(world.addGameObject(secondAnchor));
-        if (numberOfRoadAnchors == 4) {
-            GameObject thirdAnchor = new Anchor(world, physicalSize.getxMax() - 10, physicalSize.getyMax() - 4);
-            GameObject fourthAnchor = new Anchor(world, physicalSize.getxMin() + 10, physicalSize.getyMax() - 4);
-
-            GameWorld.gameBridgeAnchors.add(world.addGameObject(thirdAnchor));
-            GameWorld.gameBridgeAnchors.add(world.addGameObject(fourthAnchor));
+    private void addBridgeAnchors(GameWorld gameWorld, int numberOfRoadAnchors) {
+        ArrayList<GameObject> gameBridgeAnchors = new ArrayList<>(numberOfRoadAnchors);
+        gameBridgeAnchors.add(gameWorld.addGameObject(new Anchor(gameWorld, -this.bridgeLength / 2 + 3, physicalSize.getyMax() - 7)));
+        gameBridgeAnchors.add(gameWorld.addGameObject(new Anchor(gameWorld, this.bridgeLength / 2 - 3, physicalSize.getyMax() - 7)));
+        if (numberOfRoadAnchors == 3) {
+            gameBridgeAnchors.add(gameWorld.addGameObject(new Anchor(gameWorld, this.bridgeLength / 2 - 14, physicalSize.getyMax() - 3)));
         }
+        GameWorld.gameBridgeAnchors = gameBridgeAnchors;
     }
 
-    private void addRoadAnchors(GameWorld world, int numberOfRoadAnchors) {
-        GameWorld.road = new ArrayList<>(numberOfRoadAnchors);
-        GameObject firstAnchor = new Road(world, physicalSize.getxMin(), -this.bridgeLength / 2, 0, physicalSize.getyMax());
-        GameObject secondAnchor = new Road(world, this.bridgeLength / 2, physicalSize.getxMax(), 0, physicalSize.getyMax());
-
-        GameWorld.road.add(world.addGameObject(firstAnchor));
-        GameWorld.road.add(world.addGameObject(secondAnchor));
+    private void addRoadAnchors(GameWorld gameWorld, int numberOfRoadAnchors) {
+        ArrayList<GameObject> roadAnchors = new ArrayList<>(numberOfRoadAnchors);
+        roadAnchors.add(gameWorld.addGameObject(new Road(gameWorld, physicalSize.getxMin(), -this.bridgeLength / 2, 0, physicalSize.getyMax())));
+        roadAnchors.add(gameWorld.addGameObject(new Road(gameWorld, this.bridgeLength / 2, physicalSize.getxMax(), 0, physicalSize.getyMax())));
+        GameWorld.road = roadAnchors;
     }
 
     private void addBridgeDecks(GameWorld world, int numberOfBridgeDecks) {
         float deckWidth = bridgeLength / numberOfBridgeDecks;
-
         GameWorld.bridge = new ArrayList<>(numberOfBridgeDecks);
-        GameObject bridge;
         for (int i = 0; i < numberOfBridgeDecks; i++) {
-            bridge = new Bridge(world, (-bridgeLength / 2) + (i * deckWidth), 0, deckWidth, deckHeight);
+            float x = -bridgeLength / 2 + i * deckWidth + deckWidth / 2;
+            GameObject bridge = new Bridge(world, x, 0, deckWidth, deckHeight);
             GameWorld.bridge.add(world.addGameObject(bridge));
         }
     }
@@ -148,8 +152,8 @@ public class Level {
         float deckWidth = bridgeLength / numberOfBridgeDecks;
 
         Terrorist terrorist = new Terrorist(world, physicalSize.getxMin() + 2, -1);
-        GameWorld.setTerrorist(terrorist);
         world.addGameObject(terrorist);
+        GameWorld.setTerrorist(terrorist);
 
         MyRevoluteJoint joint = GameWorld.gameJoints.get(index);
         Bomb bomb = new Bomb(world, joint.getJoint().getBodyB().getPositionX() - deckWidth / 2, joint.getJoint().getBodyB().getPositionY() + deckHeight / 2, joint, world.getActivity().getResources());
