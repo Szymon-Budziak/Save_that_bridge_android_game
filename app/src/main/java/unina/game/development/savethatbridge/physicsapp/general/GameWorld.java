@@ -6,7 +6,6 @@ import android.graphics.Canvas;
 import android.graphics.RectF;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import unina.game.development.savethatbridge.R;
@@ -253,22 +252,27 @@ public class GameWorld {
     }
 
     private void removeObjects(List<GameObject> objects) {
-        for (GameObject object : objects) {
+        for (GameObject object : objects)
             this.removeGameObject(object);
-        }
     }
 
     private void addJointsToDestroy(List<MyRevoluteJoint> joints) {
-        for (MyRevoluteJoint joint : joints) {
+        for (MyRevoluteJoint joint : joints)
             jointsToDestroy.add(joint.getJoint());
-        }
     }
 
     public synchronized void update(float elapsedTime) {
         this.world.step(elapsedTime, 8, 3, 3);
         handleJointsToDestroy();
-        handleCollisions(this.contactListener.getCollisions());
-        handleTouchEvents();
+        for (Collision event : this.contactListener.getCollisions()) {
+            if (isEnclosureCollision(event)) {
+                if (isBallCollision(event) && !verified) {
+                    this.verifyWin(event.getA(), event.getB());
+                }
+            }
+        }
+        for (Input.TouchEvent event : this.touchHandler.getTouchEvents())
+            this.touchConsumer.consumeTouchEvent(event);
     }
 
     private void handleJointsToDestroy() {
@@ -276,34 +280,20 @@ public class GameWorld {
             destroyJoints(jointsToDestroy);
             destroyBodies(objectsToDestroy);
             setPreviousObjectsDestroyed(true);
-            if (!readyForNextLevel) {
-                readyForNextLevel = true;
-            }
+            if (!readyForNextLevel) readyForNextLevel = true;
         }
     }
 
     private void destroyJoints(List<Joint> joints) {
-        for (Joint joint : joints) {
+        for (Joint joint : joints)
             this.world.destroyJoint(joint);
-        }
         joints.clear();
     }
 
     private void destroyBodies(List<Body> bodies) {
-        for (Body body : bodies) {
+        for (Body body : bodies)
             this.world.destroyBody(body);
-        }
         bodies.clear();
-    }
-
-    private void handleCollisions(Collection<Collision> collisions) {
-        for (Collision event : collisions) {
-            if (isEnclosureCollision(event)) {
-                if (isBallCollision(event) && !verified) {
-                    this.verifyWin(event.getA(), event.getB());
-                }
-            }
-        }
     }
 
     private boolean isEnclosureCollision(Collision event) {
@@ -314,19 +304,12 @@ public class GameWorld {
         return event.getA() instanceof Ball || event.getB() instanceof Ball;
     }
 
-    private void handleTouchEvents() {
-        for (Input.TouchEvent event : this.touchHandler.getTouchEvents()) {
-            this.touchConsumer.consumeTouchEvent(event);
-        }
-    }
-
     public synchronized void render() {
         this.canvas.save();
         this.canvas.drawBitmap(this.bitmap, null, dest, null);
         this.canvas.restore();
-        for (GameObject obj : this.gameObjects) {
+        for (GameObject obj : this.gameObjects)
             obj.draw(this.bitmapBuffer);
-        }
     }
 
     public synchronized void setupNextLevel() {
@@ -344,50 +327,57 @@ public class GameWorld {
         return previousObjectsDestroyed;
     }
 
-    public synchronized void addReinforcement(GameObject objectA, GameObject objectB) {
-        Anchor anchor = ((Anchor) ((objectA instanceof Anchor) ? objectA : objectB));
-        Bridge bridge = ((Bridge) ((objectA instanceof Bridge) ? objectA : objectB));
-        if (planksToPlace > 0) {
-            if (canPlace) {
-                float anchorWidth = Anchor.getWidth();
-                float hb = deckHeight;
-                float dist_ab_x = Math.abs(anchor.body.getPositionX() - bridge.body.getPositionX());
-                float dist_ab_y = Math.abs(anchor.body.getPositionY() - bridge.body.getPositionY());
-                float width = (float) Math.sqrt(Math.pow(anchor.body.getPositionX() - bridge.body.getPositionX(), 2) + Math.pow(anchor.body.getPositionY() - bridge.body.getPositionY(), 2)) - anchorWidth / 2;
-                if (width < 12) {
-                    float x = Math.min(anchor.body.getPositionX(), bridge.body.getPositionX()) + dist_ab_x / 2;
-                    float y = Math.min(anchor.body.getPositionY(), bridge.body.getPositionY()) + dist_ab_y / 2;
-                    float angle = (float) ((anchor.body.getPositionX() < bridge.body.getPositionX()) ? 3.14 / 2 + Math.atan(dist_ab_x / dist_ab_y) : 3.14 / 2 - Math.atan(dist_ab_x / dist_ab_y));
-                    BridgeReinforcement reinforcement = new BridgeReinforcement(this, x, y, width, deckHeight, angle);
-                    this.addGameObject(reinforcement);
-                    bridgeConstructions.add(reinforcement);
-                    if (anchor.body.getPositionX() < reinforcement.body.getPositionX() && anchor.body.getPositionY() > reinforcement.body.getPositionY()) { // left road anchor
-                        gameJoints.add(new MyRevoluteJoint(this, anchor.body, reinforcement.body, dist_ab_x / 2 - anchorWidth / 2, -dist_ab_y / 2 + anchorWidth, anchorWidth / 2, 0));
-                        gameJoints.add(new MyRevoluteJoint(this, bridge.body, reinforcement.body, -dist_ab_x / 2, -dist_ab_y / 2 + hb * 3 / 2, 0, hb));
-                    } else if (anchor.body.getPositionX() > reinforcement.body.getPositionX() && anchor.body.getPositionY() > reinforcement.body.getPositionY()) { // right road anchor
-                        gameJoints.add(new MyRevoluteJoint(this, anchor.body, reinforcement.body, width / 2, 0, 0, 0));
-                        gameJoints.add(new MyRevoluteJoint(this, bridge.body, reinforcement.body, -width / 2, 0, 0, 0));
+    public synchronized void addBridgeReinforcement(GameObject objectA, GameObject objectB) {
+        Anchor anchor = objectA instanceof Anchor ? (Anchor) objectA : (Anchor) objectB;
+        Bridge bridge = objectA instanceof Bridge ? (Bridge) objectA : (Bridge) objectB;
 
-                    }
-                    bridge.setHasAnchor(false);
-                    planksToPlace--;
-                }
-            }
+        if (planksToPlace == 0 || !canPlace) return;
+
+        // calculating distance between selected joints
+        float anchorPosX = anchor.body.getPositionX();
+        float anchorPosY = anchor.body.getPositionY();
+        float anchorWidth = Anchor.getWidth();
+
+        float bridgePosX = bridge.body.getPositionX();
+        float bridgePosY = bridge.body.getPositionY();
+
+        float dist_ab_x = Math.abs(anchorPosX - bridgePosX);
+        float dist_ab_y = Math.abs(anchorPosY - bridgePosY);
+        float width = (float) Math.sqrt(Math.pow(dist_ab_x, 2) + Math.pow(dist_ab_y, 2)) - anchorWidth / 2;
+
+        if (width >= 14) return;
+
+        float x = Math.min(anchorPosX, bridgePosX) + dist_ab_x / 2;
+        float y = Math.min(anchorPosY, bridgePosY) + dist_ab_y / 2;
+        float angle = (float) ((anchorPosX < bridgePosX) ? Math.PI / 2 + Math.atan(dist_ab_x / dist_ab_y) : Math.PI / 2 - Math.atan(dist_ab_x / dist_ab_y));
+        BridgeReinforcement reinforcement = new BridgeReinforcement(this, x, y, width, deckHeight, angle);
+        this.addGameObject(reinforcement);
+        bridgeConstructions.add(reinforcement);
+
+        if (anchorPosX < reinforcement.body.getPositionX() && anchorPosY > reinforcement.body.getPositionY()) {
+            gameJoints.add(new MyRevoluteJoint(this, anchor.body, reinforcement.body, dist_ab_x / 2 - anchorWidth / 2, -dist_ab_y / 2 + anchorWidth, anchorWidth / 2, 0));
+            gameJoints.add(new MyRevoluteJoint(this, bridge.body, reinforcement.body, -dist_ab_x / 2, -dist_ab_y / 2 + deckHeight * 3 / 2, 0, deckHeight));
+        } else if (anchorPosX > reinforcement.body.getPositionX() && anchorPosY > reinforcement.body.getPositionY()) {
+            gameJoints.add(new MyRevoluteJoint(this, anchor.body, reinforcement.body, width / 2, 0, 0, 0));
+            gameJoints.add(new MyRevoluteJoint(this, bridge.body, reinforcement.body, -width / 2, 0, 0, 0));
         }
+
+        bridge.setHasAnchor(false);
+        planksToPlace--;
     }
 
     public synchronized void verifyLevel() {
         verified = false;
         canPlace = false;
         ball = this.addGameObject(new Ball(this, this.physicalSize.getxMin() + 2, 0));
-        ballSound.play();
+        this.ballSound.play();
     }
 
     synchronized void verifyWin(GameObject a, GameObject b) {
         verified = true;
         AndroidFastRenderView.setHasWon((a instanceof EnclosureGO) ? b.body.getPositionY() < 0 : a != null && a.body.getPositionY() < 0);
         this.removeGameObject(ball);
-        ballSound.stop();
+        this.ballSound.stop();
         AndroidFastRenderView.setIsWinVerified(true);
         setPreviousObjectsDestroyed(false);
     }
