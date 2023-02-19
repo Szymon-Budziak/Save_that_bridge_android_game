@@ -1,7 +1,6 @@
 # Save That Bridge
 
-"Save That Bridge" is an Android application project written in Java in AndroidStudio for Game
-Design and Development course at UNINA.
+"Save That Bridge" is an Android game written in Java and in AndroidStudio for Game Design and Development course at UNINA.
 
 ## Gameplay
 
