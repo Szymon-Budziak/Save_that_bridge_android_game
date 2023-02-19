@@ -7,6 +7,10 @@ Design and Development course at UNINA.
 
 Here is a short gameplay:
 
+
+https://user-images.githubusercontent.com/75530523/219958194-f65d5789-fa85-4136-bc38-1f077f2e63ce.mp4
+
+
 ## The structure of the project
 
 The main structure of is under **Save_that_bridge_android_game/app/src/main/java/**.
