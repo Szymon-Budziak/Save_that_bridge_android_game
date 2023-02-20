@@ -62,7 +62,7 @@ public class BridgeReinforcement extends GameObject {
         fixtureDef.setDensity(DENSITY);
         this.body.createFixture(fixtureDef);
 
-//        // color of the bridge reinforcement anchors
+        // color of the bridge reinforcement anchors
         if (this.hasAnchor) {
             int color = Color.argb(200, 250, 0, 0);
             this.paint.setColor(color);
